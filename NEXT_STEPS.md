@@ -34,7 +34,7 @@
 
 ### 5. Hallazgos durante la auditoría
 - **Código muerto detectado:** `AppConstants.cs:29-31` define `PrefRadioKm`, `PrefTemaApp`, `PrefUltimaComuna` sin que ningún otro archivo las use
-- **Sin repositorio git:** el proyecto no tiene `.git` inicializado
+- **Repositorio git:** inicializado en esta sesión, commit `8cf2ec2`, sin remote
 
 ---
 
@@ -109,12 +109,11 @@
   - ¿Distribución solo Chile o global?
   - ¿App gratuita? (una vez marcada como gratuita, no se puede cambiar a de pago)
 
-### 5. [BAJA] Inicializar repositorio git
-- **Qué:** El proyecto no tiene `.git`
-- **Archivo:** Raíz del proyecto
-- **Comando:** `git init && git add -A && git commit -m "feat: MVP farmacia abierta v1.0"`
-- **Por qué:** Sin control de versiones no hay forma de rastrear cambios ni hacer rollback
-- **Decisión del usuario:** ¿Crear repo en GitHub? ¿Público o privado?
+### 5. [BAJA] Crear remote en GitHub
+- **Qué:** Git inicializado con commit `8cf2ec2`, pero sin remote configurado
+- **Estado actual:** 1 commit en rama `master`, `.gitignore` configurado (excluye bin/, obj/, .vs/, *.keystore, screenshots)
+- **Comando:** `gh repo create farmapp --private --source=. --push` (o público si se prefiere)
+- **Decisión del usuario:** ¿Público o privado?
 
 ### 6. [BAJA] Limpiar código muerto
 - **Qué:** 3 constantes definidas sin uso

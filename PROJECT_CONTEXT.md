@@ -124,8 +124,10 @@ FarmApp/
 │   │   └── MiniMapView.xaml / .cs        ← WebView Leaflet + JS bridge
 │   └── Converters/
 │       └── InvertBoolConverter.cs
+├── Properties/
+│   └── launchSettings.json               ← Configuración de debug
 ├── Platforms/
-│   ├── Android/AndroidManifest.xml       ← INTERNET, FINE_LOCATION, CALL_PHONE
+│   ├── Android/AndroidManifest.xml       ← ACCESS_NETWORK_STATE, INTERNET, FINE_LOCATION, COARSE_LOCATION, CALL_PHONE
 │   └── iOS/Info.plist                    ← NSLocationWhenInUseUsageDescription
 └── Resources/
     ├── Raw/
