@@ -21,7 +21,7 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>Farmacia Abierta</ApplicationTitle>
+		<ApplicationTitle>FarmApp</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>cl.farmapp.farmaciaabierta</ApplicationId>

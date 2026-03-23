@@ -1,10 +1,10 @@
-# PROJECT_CONTEXT.md — FarmApp / Farmacia Abierta
+# PROJECT_CONTEXT.md — FarmApp
 
 > Contexto completo del proyecto. Última actualización: 2026-03-22.
 
 ## 1. Identidad
 
-- **Nombre:** FarmApp / Farmacia Abierta
+- **Nombre:** FarmApp
 - **App ID:** `cl.farmapp.farmaciaabierta`
 - **Versión:** 1.0 (ApplicationVersion=1)
 - **Tipo:** App móvil multiplataforma (.NET MAUI 8)

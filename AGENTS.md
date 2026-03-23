@@ -1,4 +1,4 @@
-# AGENTS.md — FarmApp / Farmacia Abierta
+# AGENTS.md — FarmApp
 
 > Guía para agentes de IA que trabajen en este proyecto.
 
