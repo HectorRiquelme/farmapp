@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  FarmApp — Adaptive icon FOREGROUND layer.
+  Background colour (#0A1F0F) is set in FarmApp.csproj.
+  Same pin geometry as appicon.svg, foreground on transparent.
+-->
+<svg width="456" height="456" viewBox="0 0 456 456" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Map pin -->
+  <path d="
+    M 228,47
+    C 310,47 376,113 376,195
+    C 376,277 310,343 228,432
+    C 146,343  80,277  80,195
+    C  80,113 146, 47 228, 47
+    Z
+  " fill="#22C55E"/>
+
+  <!-- Pharmacy cross -->
+  <rect x="203" y="95"  width="50" height="200" rx="25" fill="white"/>
+  <rect x="128" y="170" width="200" height="50"  rx="25" fill="white"/>
+
+</svg>

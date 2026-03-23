@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="leaflet.min.css"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body, #map { width: 100%; height: 100%; background: #0D1117; overflow: hidden; }
+
+    /* Popups con tema oscuro */
+    .leaflet-popup-content-wrapper {
+      background: #1C2128;
+      color: #F0F6FC;
+      border: 1px solid #30363D;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+    }
+    .leaflet-popup-tip { background: #1C2128; }
+    .leaflet-popup-content {
+      margin: 10px 14px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    .leaflet-popup-close-button { color: #8B949E !important; top: 6px !important; right: 8px !important; }
+
+    /* Controles de zoom oscuros */
+    .leaflet-control-zoom {
+      border: 1px solid #30363D !important;
+      border-radius: 8px !important;
+      overflow: hidden;
+    }
+    .leaflet-control-zoom a {
+      background-color: #161B22 !important;
+      color: #F0F6FC !important;
+      border-bottom: 1px solid #30363D !important;
+      width: 28px !important;
+      height: 28px !important;
+      line-height: 28px !important;
+    }
+    .leaflet-control-zoom a:hover { background-color: #1C2128 !important; }
+    .leaflet-control-attribution { display: none !important; }
+
+    /* Mensaje cuando no hay internet */
+    #no-map {
+      display: none;
+      position: absolute;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      background: #0D1117;
+      color: #8B949E;
+      font-family: sans-serif;
+      font-size: 14px;
+      text-align: center;
+      flex-direction: column;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="no-map">
+    <span style="font-size:28px">🗺</span>
+    <span>Mapa no disponible sin conexión</span>
+  </div>
+
+  <script src="leaflet.min.js"></script>
+  <script>
+  (function () {
+    if (typeof L === 'undefined') {
+      document.getElementById('no-map').style.display = 'flex';
+      return;
+    }
+
+    /* ── Inicializar mapa ── */
+    var map = L.map('map', {
+      zoomControl: true,
+      attributionControl: false,
+      tap: true
+    });
+
+    /* Tiles oscuros CartoDB Dark Matter */
+    L.tileLayer(
+      'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+      { subdomains: 'abcd', maxZoom: 19, minZoom: 3 }
+    ).addTo(map);
+
+    map.setView([-33.45, -70.67], 11); /* Santiago por defecto */
+
+    var markers = {}; /* id → { marker, latlng } */
+
+    /* ── Crear ícono circular por estado ── */
+    function mkIcon(estado, tipo, isMasCercana) {
+      var color = '#6B7280';
+      if (tipo === 'Urgencia')              color = '#3B82F6';
+      else if (estado === 'AbiertaAhora')   color = '#22C55E';
+      else if (estado === 'PosiblementeAbierta') color = '#F59E0B';
+
+      var s   = isMasCercana ? 18 : 11;
+      var bw  = isMasCercana ? 3  : 2;
+      var glow = isMasCercana
+        ? 'box-shadow:0 0 10px 3px ' + color + '90;'
+        : '';
+
+      return L.divIcon({
+        html: '<div style="width:' + s + 'px;height:' + s + 'px;' +
+              'border-radius:50%;background:' + color + ';' +
+              'border:' + bw + 'px solid rgba(255,255,255,0.75);' +
+              glow + '"></div>',
+        className: '',
+        iconSize:   [s, s],
+        iconAnchor: [s / 2, s / 2],
+        popupAnchor:[0, -(s / 2 + 5)]
+      });
+    }
+
+    /* ── Cargar todas las farmacias en el mapa ── */
+    window.loadFarmacias = function (data) {
+      /* Limpiar marcadores previos */
+      Object.values(markers).forEach(function (e) { map.removeLayer(e.marker); });
+      markers = {};
+
+      var points = [];
+
+      data.forEach(function (f, idx) {
+        if (f.lat == null || f.lon == null) return;
+
+        var isMC  = (idx === 0);
+        var ll    = [f.lat, f.lon];
+        var mInst = L.marker(ll, {
+          icon: mkIcon(f.estado, f.tipo, isMC),
+          zIndexOffset: isMC ? 1000 : 0
+        }).addTo(map);
+
+        var label = (isMC ? '⭐ ' : '') + f.nombre;
+        mInst.bindPopup(label, { closeButton: false, minWidth: 130 });
+
+        /* Tap sobre pin: centrar mapa en ese pin */
+        mInst.on('click', function () {
+          map.setView(ll, Math.max(map.getZoom(), 14), { animate: true, duration: 0.35 });
+          mInst.openPopup();
+        });
+
+        markers[f.id] = { marker: mInst, latlng: ll };
+        points.push(ll);
+      });
+
+      /* Ajustar vista para ver todos los pins */
+      if (points.length === 1) {
+        map.setView(points[0], 14);
+      } else if (points.length > 1) {
+        try {
+          map.fitBounds(L.latLngBounds(points), { padding: [45, 45], maxZoom: 13 });
+        } catch (_) {
+          map.setView(points[0], 11);
+        }
+      }
+
+      /* Abrir popup de la farmacia más cercana al cargar */
+      if (data.length > 0 && data[0].lat != null && markers[data[0].id]) {
+        setTimeout(function () {
+          markers[data[0].id].marker.openPopup();
+        }, 700);
+      }
+    };
+
+    /* ── Centrar mapa en una farmacia específica (llamado desde C#) ── */
+    window.centrarEn = function (id) {
+      var e = markers[id];
+      if (!e) return;
+      map.setView(e.latlng, Math.max(map.getZoom(), 15), { animate: true, duration: 0.35 });
+      e.marker.openPopup();
+    };
+
+    /* ── Notificar a la app nativa que el mapa está listo ── */
+    setTimeout(function () {
+      window.location.href = 'farmapp://ready';
+    }, 50);
+
+  }());
+  </script>
+</body>
+</html>

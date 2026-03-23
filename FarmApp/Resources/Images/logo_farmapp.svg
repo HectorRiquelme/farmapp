@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  FarmApp — In-app logo mark.
+  Pin teardrop + pharmacy cross, on dark-green rounded-square background.
+
+  Displayed in HomePage.xaml as:
+    <Image Source="logo_farmapp.svg" WidthRequest="56" HeightRequest="72"/>
+
+  ViewBox: 168×216  (pin ratio ≈ 0.78 → maps to 56×72 in XAML)
+  Pin geometry:
+    Circle centre: (84, 78)  radius: 58
+    Pin tip: (84, 200)
+  Cross (arm half-width 10, arm length 38 from centre):
+    Vertical:   x=74–94  y=40–116  rx=10
+    Horizontal: x=46–122 y=68–88   rx=10
+-->
+<svg width="168" height="216" viewBox="0 0 168 216" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Rounded dark background tile -->
+  <rect width="168" height="168" rx="38" fill="#0D2B1A"/>
+
+  <!-- ── MAP PIN ──────────────────────────────────────── -->
+  <path d="
+    M  84, 20
+    C 114, 20 142, 48 142, 78
+    C 142,108 114,136  84,200
+    C  54,136  26,108  26, 78
+    C  26, 48  54, 20  84, 20
+    Z
+  " fill="#22C55E"/>
+
+  <!-- ── PHARMACY CROSS ───────────────────────────────── -->
+  <rect x="74" y="40"  width="20" height="76" rx="10" fill="white"/>
+  <rect x="46" y="68"  width="76" height="20" rx="10" fill="white"/>
+
+</svg>
