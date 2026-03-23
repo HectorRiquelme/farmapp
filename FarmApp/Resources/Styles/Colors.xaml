@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  BASE — Fondos y superficies                                -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <Color x:Key="ColorBackground">#0D1117</Color>
+    <Color x:Key="ColorBackgroundLight">#F1F5F9</Color>
+
+    <Color x:Key="ColorSurface">#161B22</Color>
+    <Color x:Key="ColorSurfaceLight">#FFFFFF</Color>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  SEPARADORES / BORDES NEUTROS                               -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <Color x:Key="ColorSeparador">#30363D</Color>
+    <Color x:Key="ColorSeparadorLight">#CBD5E1</Color>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  TEXTO                                                       -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <Color x:Key="ColorTextoPrimario">#F0F6FC</Color>
+    <Color x:Key="ColorTextoPrimarioLight">#0F172A</Color>
+
+    <Color x:Key="ColorTextoSecundario">#8B949E</Color>
+    <Color x:Key="ColorTextoSecundarioLight">#475569</Color>
+
+    <!-- Texto sutil (pie de página, disclaimers) -->
+    <Color x:Key="ColorTextoSutil">#2E4A36</Color>
+    <Color x:Key="ColorTextoSutilLight">#94A3B8</Color>
+
+    <!-- Tags de categoría (TURNO · URGENCIA · CERCANA) -->
+    <Color x:Key="ColorTagCategoria">#3D6B4F</Color>
+    <Color x:Key="ColorTagCategoriaLight">#4B7A5C</Color>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  BANNER DE ADVERTENCIA (caché / sin conexión)               -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <Color x:Key="ColorAdvertenciaFondo">#2A2000</Color>
+    <Color x:Key="ColorAdvertenciaFondoLight">#FFFBEB</Color>
+
+    <Color x:Key="ColorAdvertenciaBorde">#CA8A04</Color>
+    <Color x:Key="ColorAdvertenciaBordeLight">#F59E0B</Color>
+
+    <Color x:Key="ColorAdvertenciaTexto">#FCD34D</Color>
+    <Color x:Key="ColorAdvertenciaTextoLight">#92400E</Color>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  FRAMES DE ERROR (permiso denegado, fallo de red)           -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <Color x:Key="ColorErrorFondo">#2A1F1F</Color>
+    <Color x:Key="ColorErrorFondoLight">#FEF2F2</Color>
+
+    <Color x:Key="ColorErrorBorde">#6B2626</Color>
+    <Color x:Key="ColorErrorBordeLight">#FECACA</Color>
+
+    <Color x:Key="ColorErrorTexto">#F87171</Color>
+    <Color x:Key="ColorErrorTextoLight">#991B1B</Color>
+
+    <Color x:Key="ColorErrorBoton">#B91C1C</Color>
+    <Color x:Key="ColorErrorBotonLight">#DC2626</Color>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  ESTADOS DE APERTURA                                         -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <Color x:Key="ColorAbiertaAhora">#22C55E</Color>
+    <Color x:Key="ColorPosiblemente">#F59E0B</Color>
+    <Color x:Key="ColorNoConfirmado">#6B7280</Color>
+    <Color x:Key="ColorCerrada">#4B5563</Color>
+    <Color x:Key="ColorUrgencia">#3B82F6</Color>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  ACCIONES                                                    -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <Color x:Key="ColorNavegacion">#3B82F6</Color>
+    <Color x:Key="ColorLlamar">#22C55E</Color>
+    <Color x:Key="ColorPeligro">#EF4444</Color>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  COLORES DE SISTEMA (requeridos por Styles.xaml base MAUI)  -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <Color x:Key="Primary">#22C55E</Color>
+    <Color x:Key="PrimaryDark">#16A34A</Color>
+    <Color x:Key="PrimaryDarkText">#F0F6FC</Color>
+    <Color x:Key="Secondary">#3B82F6</Color>
+    <Color x:Key="SecondaryDarkText">#8B949E</Color>
+    <Color x:Key="Tertiary">#0D1117</Color>
+    <Color x:Key="Magenta">#3B82F6</Color>
+    <Color x:Key="MidnightBlue">#0D1117</Color>
+    <Color x:Key="OffBlack">#161B22</Color>
+    <Color x:Key="White">White</Color>
+    <Color x:Key="Black">Black</Color>
+    <Color x:Key="Gray100">#E1E1E1</Color>
+    <Color x:Key="Gray200">#C8C8C8</Color>
+    <Color x:Key="Gray300">#ACACAC</Color>
+    <Color x:Key="Gray400">#919191</Color>
+    <Color x:Key="Gray500">#6E6E6E</Color>
+    <Color x:Key="Gray600">#404040</Color>
+    <Color x:Key="Gray900">#212121</Color>
+    <Color x:Key="Gray950">#141414</Color>
+
+    <SolidColorBrush x:Key="PrimaryBrush"   Color="{StaticResource Primary}"/>
+    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
+    <SolidColorBrush x:Key="WhiteBrush"     Color="{StaticResource White}"/>
+    <SolidColorBrush x:Key="BlackBrush"     Color="{StaticResource Black}"/>
+
+</ResourceDictionary>

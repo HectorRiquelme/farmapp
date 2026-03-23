@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  FarmApp — App icon
+  Classic teardrop map-pin with a pharmacy cross inside the head.
+  Canvas: 456×456. Pin is centered with ~28px side padding.
+
+  Pin geometry:
+    Circle centre: (228, 195)   radius: 148
+    Pin tip:       (228, 445)
+  Cross geometry (white, contained within the circle):
+    Centre: (228, 195)
+    Arm half-width: 25px  |  Arm length from centre: 100px
+-->
+<svg width="456" height="456" viewBox="0 0 456 456" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Dark-green background -->
+  <rect width="456" height="456" fill="#0A1F0F"/>
+
+  <!-- ── MAP PIN (teardrop) ─────────────────────────────── -->
+  <!--
+    Smooth cubic-bezier teardrop going clockwise from top (228, 47).
+    Right side:  top → rightmost point → tip
+    Left side:   tip → leftmost point → top
+  -->
+  <path d="
+    M 228,47
+    C 310,47 376,113 376,195
+    C 376,277 310,343 228,432
+    C 146,343  80,277  80,195
+    C  80,113 146, 47 228, 47
+    Z
+  " fill="#22C55E"/>
+
+  <!-- ── PHARMACY CROSS (white, inside pin head) ──────── -->
+  <!-- Vertical arm -->
+  <rect x="203" y="95"  width="50" height="200" rx="25" fill="white"/>
+  <!-- Horizontal arm -->
+  <rect x="128" y="170" width="200" height="50"  rx="25" fill="white"/>
+
+</svg>

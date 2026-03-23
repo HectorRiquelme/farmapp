@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="FarmApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pages="clr-namespace:FarmApp.Presentation.Pages"
+    Shell.FlyoutBehavior="Disabled"
+    Title="Farmacia Abierta">
+
+    <ShellContent
+        Title="Inicio"
+        ContentTemplate="{DataTemplate pages:HomePage}"
+        Route="HomePage" />
+
+</Shell>

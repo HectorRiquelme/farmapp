@@ -1,0 +1,25 @@
+# Build output
+**/bin/
+**/obj/
+
+# IDE
+.vs/
+*.user
+*.suo
+
+# Keystore (sensible)
+*.keystore
+*.jks
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+nul
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# Screenshots de desarrollo
+FarmApp/*.png

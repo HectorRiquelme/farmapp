@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="FarmApp.Presentation.Controls.EstadoBadge"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:FarmApp.Domain.Models">
+
+    <Frame
+        x:Name="BadgeFrame"
+        CornerRadius="8"
+        Padding="10,5"
+        HasShadow="False">
+        <Label
+            x:Name="BadgeLabel"
+            FontSize="13"
+            FontAttributes="Bold"
+            TextColor="White" />
+    </Frame>
+
+</ContentView>

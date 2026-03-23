@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  FarmApp — Splash screen icon.
+  BaseSize="120,145" in .csproj → centered on #0A1F0F background.
+  Same proportions as main icon, scaled to 120×145.
+-->
+<svg width="120" height="145" viewBox="0 0 120 145" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Map pin teardrop (scaled: centre 60,51  radius 39  tip y=133) -->
+  <path d="
+    M  60,12
+    C  82,12 99,29 99,51
+    C  99,73 82,90 60,133
+    C  38,90 21,73 21,51
+    C  21,29 38,12 60,12
+    Z
+  " fill="#22C55E"/>
+
+  <!-- Pharmacy cross (arm half-width 7, arm length 26) -->
+  <rect x="53" y="25"  width="14" height="52" rx="7" fill="white"/>
+  <rect x="34" y="44"  width="52" height="14" rx="7" fill="white"/>
+
+</svg>

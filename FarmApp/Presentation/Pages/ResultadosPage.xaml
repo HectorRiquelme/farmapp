@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Name="Self"
+    x:Class="FarmApp.Presentation.Pages.ResultadosPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:FarmApp.Presentation.ViewModels"
+    xmlns:controls="clr-namespace:FarmApp.Presentation.Controls"
+    xmlns:models="clr-namespace:FarmApp.Domain.Models"
+    x:DataType="vm:ResultadosViewModel"
+    BackgroundColor="{AppThemeBinding Dark={StaticResource ColorBackground}, Light={StaticResource ColorBackgroundLight}}"
+    Title="Farmapp">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="True" />
+    </Shell.BackButtonBehavior>
+
+    <Grid RowDefinitions="Auto, *">
+
+        <!-- Banner de advertencia (caché / desactualizado) -->
+        <Frame
+            Grid.Row="0"
+            IsVisible="{Binding MostrarAdvertencia}"
+            BackgroundColor="{AppThemeBinding Dark={StaticResource ColorAdvertenciaFondo}, Light={StaticResource ColorAdvertenciaFondoLight}}"
+            BorderColor="{AppThemeBinding Dark={StaticResource ColorAdvertenciaBorde}, Light={StaticResource ColorAdvertenciaBordeLight}}"
+            CornerRadius="0"
+            Padding="12,10">
+            <Label
+                Text="{Binding TextoAdvertencia}"
+                FontSize="13"
+                TextColor="{AppThemeBinding Dark={StaticResource ColorAdvertenciaTexto}, Light={StaticResource ColorAdvertenciaTextoLight}}"
+                HorizontalTextAlignment="Center" />
+        </Frame>
+
+        <!--
+            NOTA TÉCNICA: ScrollView + BindableLayout en lugar de CollectionView anidado
+            para evitar conflictos de tap gesture en Android.
+            Todas las farmacias (incluyendo la más cercana) están en un único BindableLayout.
+        -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="0">
+
+                <!-- ══════════════════════════════════════════════════ -->
+                <!--  CONTEXTO: qué muestra esta pantalla               -->
+                <!-- ══════════════════════════════════════════════════ -->
+                <VerticalStackLayout
+                    Padding="20,14,20,0"
+                    Spacing="2">
+                    <Label
+                        Text="Farmacias de turno nocturno"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        TextColor="{AppThemeBinding Dark={StaticResource ColorTextoPrimario}, Light={StaticResource ColorTextoPrimarioLight}}" />
+                    <Label
+                        Text="Asignadas oficialmente por MINSAL · Solo de turno, no todas las farmacias"
+                        FontSize="12"
+                        TextColor="{AppThemeBinding Dark={StaticResource ColorTextoSecundario}, Light={StaticResource ColorTextoSecundarioLight}}" />
+                </VerticalStackLayout>
+
+                <!-- ══════════════════════════════════════════════════ -->
+                <!--  PANEL DE RADIO DE BÚSQUEDA                        -->
+                <!--  Slider 1–25 km + botón Aplicar                    -->
+                <!-- ══════════════════════════════════════════════════ -->
+                <Frame
+                    IsVisible="{Binding TieneDistancias}"
+                    BackgroundColor="{AppThemeBinding Dark={StaticResource ColorSurface}, Light={StaticResource ColorSurfaceLight}}"
+                    BorderColor="{AppThemeBinding Dark={StaticResource ColorSeparador}, Light={StaticResource ColorSeparadorLight}}"
+                    CornerRadius="12"
+                    HasShadow="False"
+                    Padding="14,12"
+                    Margin="16,12,16,0">
+
+                    <VerticalStackLayout Spacing="8">
+
+                        <!-- Etiqueta + valor actual -->
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Label
+                                Text="Radio de búsqueda"
+                                FontSize="14"
+                                FontAttributes="Bold"
+                                TextColor="{AppThemeBinding Dark={StaticResource ColorTextoPrimario}, Light={StaticResource ColorTextoPrimarioLight}}"
+                                VerticalOptions="Center" />
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding RadioTexto}"
+                                FontSize="14"
+                                FontAttributes="Bold"
+                                TextColor="{StaticResource ColorAbiertaAhora}"
+                                VerticalOptions="Center" />
+                        </Grid>
+
+                        <!-- Slider + botón en la misma fila -->
+                        <Grid ColumnDefinitions="*, Auto" ColumnSpacing="12">
+                            <Slider
+                                Grid.Column="0"
+                                Minimum="1"
+                                Maximum="25"
+                                Value="{Binding RadioKm, Mode=TwoWay}"
+                                ThumbColor="{StaticResource ColorAbiertaAhora}"
+                                MinimumTrackColor="{StaticResource ColorAbiertaAhora}"
+                                MaximumTrackColor="{AppThemeBinding Dark={StaticResource ColorSeparador}, Light={StaticResource ColorSeparadorLight}}"
+                                VerticalOptions="Center" />
+                            <Button
+                                Grid.Column="1"
+                                Text="Aplicar"
+                                Command="{Binding ConfirmarRadioCommand}"
+                                BackgroundColor="{StaticResource ColorAbiertaAhora}"
+                                TextColor="White"
+                                CornerRadius="8"
+                                FontSize="12"
+                                FontAttributes="Bold"
+                                Padding="12,0"
+                                HeightRequest="34"
+                                WidthRequest="72" />
+                        </Grid>
+
+                        <!-- Marcas de escala min / max -->
+                        <Grid ColumnDefinitions="Auto, *, Auto">
+                            <Label
+                                Text="1 km"
+                                FontSize="11"
+                                TextColor="{AppThemeBinding Dark={StaticResource ColorTextoSecundario}, Light={StaticResource ColorTextoSecundarioLight}}" />
+                            <Label
+                                Grid.Column="2"
+                                Text="25 km"
+                                FontSize="11"
+                                TextColor="{AppThemeBinding Dark={StaticResource ColorTextoSecundario}, Light={StaticResource ColorTextoSecundarioLight}}" />
+                        </Grid>
+
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- ══════════════════════════════════════════════════ -->
+                <!--  MINI MAPA REFERENCIAL                             -->
+                <!-- ══════════════════════════════════════════════════ -->
+                <controls:MiniMapView
+                    x:Name="MiniMapa"
+                    IsVisible="{Binding TieneResultados}"
+                    Margin="16,12,16,0" />
+
+                <!-- Sin resultados -->
+                <VerticalStackLayout
+                    IsVisible="{Binding SinResultados}"
+                    Spacing="16"
+                    Padding="24,60,24,24"
+                    HorizontalOptions="Center">
+                    <Label
+                        Text="Sin farmacias disponibles"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        HorizontalOptions="Center"
+                        TextColor="{AppThemeBinding Dark={StaticResource ColorTextoPrimario}, Light={StaticResource ColorTextoPrimarioLight}}" />
+                    <Label
+                        Text="No encontramos farmacias de turno en tu zona. Prueba ampliar el radio o buscar en otra zona."
+                        FontSize="15"
+                        HorizontalTextAlignment="Center"
+                        TextColor="{AppThemeBinding Dark={StaticResource ColorTextoSecundario}, Light={StaticResource ColorTextoSecundarioLight}}" />
+                    <Button
+                        Text="Volver"
+                        Command="{Binding VolverCommand}"
+                        BackgroundColor="Transparent"
+                        BorderColor="{AppThemeBinding Dark={StaticResource ColorSeparador}, Light={StaticResource ColorSeparadorLight}}"
+                        BorderWidth="1"
+                        TextColor="{AppThemeBinding Dark={StaticResource ColorTextoPrimario}, Light={StaticResource ColorTextoPrimarioLight}}"
+                        CornerRadius="10"
+                        HeightRequest="48" />
+                </VerticalStackLayout>
+
+                <!-- ══════════════════════════════════════════════════ -->
+                <!--  LISTA UNIFICADA                                    -->
+                <!--  La primera card tiene EsMasCercana=true y muestra  -->
+                <!--  el encabezado "La más cercana".                    -->
+                <!--  Todas usan el mismo diseño FarmaciaCardCompacta.   -->
+                <!-- ══════════════════════════════════════════════════ -->
+                <VerticalStackLayout
+                    x:Name="ListaFarmacias"
+                    IsVisible="{Binding TieneResultados}"
+                    Margin="16,8,16,32"
+                    BindableLayout.ItemsSource="{Binding Farmacias}">
+
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:Farmacia">
+                            <controls:FarmaciaCardCompacta
+                                Farmacia="{Binding .}"
+                                Margin="0,0,0,8"
+                                SeleccionarCommand="{Binding BindingContext.SeleccionarFarmaciaCommand,
+                                    Source={x:Reference Self}}"
+                                VerDetalleCommand="{Binding BindingContext.VerDetalleFarmaciaCommand,
+                                    Source={x:Reference Self}}" />
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </Grid>
+
+</ContentPage>

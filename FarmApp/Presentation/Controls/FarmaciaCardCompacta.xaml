@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="FarmApp.Presentation.Controls.FarmaciaCardCompacta"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:FarmApp.Presentation.Controls"
+    xmlns:models="clr-namespace:FarmApp.Domain.Models">
+
+    <!--
+        La primera farmacia de la lista muestra el encabezado "La más cercana".
+        El borde verde (selección) se gestiona desde el code-behind vía IsSelected.
+    -->
+    <Frame
+        x:Name="CardFrame"
+        BackgroundColor="{AppThemeBinding Dark={StaticResource ColorSurface}, Light={StaticResource ColorSurfaceLight}}"
+        BorderColor="{AppThemeBinding Dark={StaticResource ColorSeparador}, Light={StaticResource ColorSeparadorLight}}"
+        CornerRadius="14"
+        HasShadow="False"
+        Padding="14,12">
+
+        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto, Auto" RowSpacing="4" ColumnSpacing="8">
+
+            <!-- ── Fila 0: encabezado ─────────────────────────────────── -->
+            <!-- "La más cercana" (oculto por defecto) + Badge de estado   -->
+            <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="8">
+                <Label
+                    x:Name="LabelMasCercana"
+                    Text="La más cercana"
+                    FontSize="11"
+                    FontAttributes="Bold"
+                    TextColor="{StaticResource ColorAbiertaAhora}"
+                    VerticalOptions="Center"
+                    IsVisible="False" />
+                <controls:EstadoBadge
+                    x:Name="BadgeCard"
+                    VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <!-- Distancia (derecha) -->
+            <Label
+                Grid.Row="0" Grid.Column="1"
+                x:Name="LabelDistancia"
+                FontSize="13"
+                FontAttributes="Bold"
+                TextColor="{StaticResource ColorAbiertaAhora}"
+                VerticalOptions="Center"
+                HorizontalOptions="End" />
+
+            <!-- ── Fila 1: nombre ─────────────────────────────────────── -->
+            <Label
+                Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                x:Name="LabelNombre"
+                FontSize="17"
+                FontAttributes="Bold"
+                TextColor="{AppThemeBinding Dark={StaticResource ColorTextoPrimario}, Light={StaticResource ColorTextoPrimarioLight}}"
+                LineBreakMode="TailTruncation" />
+
+            <!-- ── Fila 2: dirección ──────────────────────────────────── -->
+            <Label
+                Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                x:Name="LabelDireccion"
+                FontSize="13"
+                TextColor="{AppThemeBinding Dark={StaticResource ColorTextoSecundario}, Light={StaticResource ColorTextoSecundarioLight}}"
+                LineBreakMode="TailTruncation" />
+
+            <!-- ── Fila 3: horario (izq) + botones (der) ──────────────── -->
+            <Label
+                Grid.Row="3" Grid.Column="0"
+                x:Name="LabelHorario"
+                FontSize="12"
+                TextColor="{AppThemeBinding Dark={StaticResource ColorTextoSecundario}, Light={StaticResource ColorTextoSecundarioLight}}"
+                VerticalOptions="Center" />
+
+            <HorizontalStackLayout Grid.Row="3" Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                <Button
+                    x:Name="BtnVerDetalle"
+                    Text="Ver detalle"
+                    BackgroundColor="Transparent"
+                    BorderColor="{StaticResource ColorAbiertaAhora}"
+                    BorderWidth="1"
+                    TextColor="{StaticResource ColorAbiertaAhora}"
+                    CornerRadius="8"
+                    FontSize="12"
+                    FontAttributes="Bold"
+                    Padding="12,0"
+                    HeightRequest="34"
+                    MinimumWidthRequest="80" />
+                <Button
+                    x:Name="BtnLlamar"
+                    Text="Llamar"
+                    BackgroundColor="{StaticResource ColorAbiertaAhora}"
+                    TextColor="White"
+                    CornerRadius="8"
+                    FontSize="12"
+                    FontAttributes="Bold"
+                    Padding="12,0"
+                    HeightRequest="34"
+                    MinimumWidthRequest="70"
+                    IsVisible="False" />
+                <Button
+                    x:Name="BtnNavegar"
+                    Text="Ir"
+                    BackgroundColor="{StaticResource ColorNavegacion}"
+                    TextColor="White"
+                    CornerRadius="8"
+                    FontSize="12"
+                    FontAttributes="Bold"
+                    Padding="12,0"
+                    HeightRequest="34"
+                    MinimumWidthRequest="50" />
+            </HorizontalStackLayout>
+
+        </Grid>
+    </Frame>
+
+</ContentView>
