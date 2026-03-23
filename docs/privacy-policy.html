@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de Privacidad — Farmacia Abierta</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0D1117; color: #F0F6FC;
+      line-height: 1.7; padding: 2rem 1rem;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+    h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #22C55E; }
+    h2 { font-size: 1.15rem; margin-top: 2rem; margin-bottom: 0.5rem; color: #8B949E; }
+    p, li { font-size: 0.95rem; color: #C9D1D9; margin-bottom: 0.6rem; }
+    ul { padding-left: 1.5rem; }
+    a { color: #3B82F6; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .date { color: #8B949E; font-size: 0.85rem; margin-bottom: 2rem; }
+    hr { border: none; border-top: 1px solid #30363D; margin: 2rem 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Política de Privacidad</h1>
+    <p class="date">Última actualización: 23 de marzo de 2026</p>
+
+    <p><strong>Farmacia Abierta</strong> es una aplicación móvil gratuita desarrollada por Héctor Riquelme. Esta política describe cómo la aplicación maneja la información del usuario.</p>
+
+    <h2>1. Datos que recopila la aplicación</h2>
+    <p>Farmacia Abierta solicita acceso a la <strong>ubicación del dispositivo</strong> exclusivamente mientras se usa la aplicación, con el único propósito de calcular la distancia hacia las farmacias de turno más cercanas.</p>
+    <ul>
+      <li>La ubicación se procesa <strong>localmente en el dispositivo</strong>.</li>
+      <li>La ubicación <strong>no se almacena en ningún servidor</strong> ni se transmite a terceros.</li>
+      <li>La ubicación no se guarda en la base de datos local de la aplicación.</li>
+    </ul>
+
+    <h2>2. Datos que NO recopila la aplicación</h2>
+    <ul>
+      <li>No se recopila información personal (nombre, correo, teléfono del usuario).</li>
+      <li>No se requiere crear cuenta ni iniciar sesión.</li>
+      <li>No se recopilan datos de uso, analytics ni telemetría.</li>
+      <li>No se utilizan cookies.</li>
+      <li>No se muestra publicidad.</li>
+      <li>No se realizan compras dentro de la aplicación.</li>
+    </ul>
+
+    <h2>3. Almacenamiento local</h2>
+    <p>La aplicación almacena datos localmente en el dispositivo mediante una base de datos SQLite:</p>
+    <ul>
+      <li><strong>Farmacias de turno:</strong> información pública obtenida del Ministerio de Salud de Chile (MINSAL), guardada temporalmente para permitir el uso sin conexión. Estos datos se eliminan automáticamente después de 2 días.</li>
+      <li><strong>Coordenadas geocodificadas:</strong> direcciones convertidas a coordenadas geográficas, almacenadas como caché para evitar consultas repetidas.</li>
+    </ul>
+    <p>Estos datos se almacenan únicamente en el dispositivo del usuario y no se transmiten a ningún servidor.</p>
+
+    <h2>4. Servicios de terceros</h2>
+    <p>Farmacia Abierta se conecta a los siguientes servicios externos:</p>
+    <ul>
+      <li><strong>API MIDAS del Ministerio de Salud de Chile (MINSAL):</strong> para obtener el listado público de farmacias de turno. No se envían datos personales en esta consulta.</li>
+      <li><strong>Nominatim (OpenStreetMap):</strong> para convertir direcciones de farmacias en coordenadas geográficas. La consulta incluye solo la dirección de la farmacia, nunca datos del usuario. La dirección IP del dispositivo es visible para el servidor como parte de cualquier conexión HTTP.</li>
+      <li><strong>CartoDB (tiles de mapa):</strong> para mostrar el mapa visual. No se envían datos personales.</li>
+    </ul>
+
+    <h2>5. Permisos del dispositivo</h2>
+    <ul>
+      <li><strong>Ubicación (GPS):</strong> para calcular la distancia a las farmacias. Se solicita permiso explícito al usuario antes de acceder.</li>
+      <li><strong>Internet:</strong> para consultar la API de farmacias de turno y los tiles del mapa.</li>
+      <li><strong>Teléfono:</strong> para permitir llamar directamente a una farmacia desde la aplicación, solo cuando el usuario lo solicita.</li>
+    </ul>
+
+    <h2>6. Seguridad</h2>
+    <p>Al no existir servidores propios ni recopilación de datos personales, los riesgos de seguridad son mínimos. Toda la información se procesa y almacena localmente en el dispositivo del usuario.</p>
+
+    <h2>7. Privacidad de menores</h2>
+    <p>La aplicación no está dirigida a menores de 13 años y no recopila información de ningún usuario, independientemente de su edad.</p>
+
+    <h2>8. Cambios en esta política</h2>
+    <p>Esta política puede actualizarse ocasionalmente. Los cambios se publicarán en esta misma página con la fecha de actualización correspondiente.</p>
+
+    <h2>9. Contacto</h2>
+    <p>Si tienes preguntas sobre esta política de privacidad, puedes contactar al desarrollador:</p>
+    <p><strong>Héctor Riquelme</strong><br>
+    <a href="mailto:hectorariquelmec@gmail.com">hectorariquelmec@gmail.com</a></p>
+
+    <hr>
+    <p style="font-size: 0.8rem; color: #8B949E;">Farmacia Abierta no tiene relación oficial con el Ministerio de Salud de Chile. Los datos de farmacias provienen de la API pública MIDAS/MINSAL.</p>
+  </div>
+</body>
+</html>
