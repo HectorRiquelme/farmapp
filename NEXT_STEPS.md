@@ -1,4 +1,4 @@
-# NEXT_STEPS.md — FarmApp / Farmacia Abierta
+# NEXT_STEPS.md — FarmApp
 
 > Pendientes reales verificados contra el código. Última actualización: 2026-03-23.
 

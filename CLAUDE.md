@@ -1,4 +1,4 @@
-# CLAUDE.md — FarmApp / Farmacia Abierta
+# CLAUDE.md — FarmApp
 
 > Referencia rápida para sesiones de Claude Code. Fuente de verdad: el código del proyecto.
 
