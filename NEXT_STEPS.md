@@ -1,10 +1,10 @@
 # NEXT_STEPS.md — FarmApp / Farmacia Abierta
 
-> Pendientes reales verificados contra el código. Última actualización: 2026-03-22.
+> Pendientes reales verificados contra el código. Última actualización: 2026-03-23.
 
 ---
 
-## Qué se hizo en esta sesión (2026-03-22)
+## Qué se hizo en esta sesión (2026-03-23)
 
 ### 1. Auditoría completa del proyecto
 - Se leyeron **todos** los archivos fuente (.cs, .xaml, .csproj, .html, .xml, .plist)
@@ -24,17 +24,30 @@
 |---------|-----------------|
 | `PROJECT_CONTEXT.md` | `Farmacia.Estado` documentado como `[Ignore]` → corregido: **se persiste en SQLite** (no tiene `[Ignore]`) |
 | `PROJECT_CONTEXT.md` | Faltaban 3 constantes `PrefRadioKm`, `PrefTemaApp`, `PrefUltimaComuna` → agregadas con nota "sin uso actual" |
-| `PROJECT_CONTEXT.md` | Paleta de colores incompleta → reescrita con todos los tokens de `Colors.xaml` (base, texto, estados, acciones, advertencia, error) |
+| `PROJECT_CONTEXT.md` | Paleta de colores incompleta → reescrita con todos los tokens de `Colors.xaml` |
+| `PROJECT_CONTEXT.md` | Faltaba `Properties/launchSettings.json` en estructura → agregado |
+| `PROJECT_CONTEXT.md` | `AndroidManifest.xml` decía 3 permisos → corregido a 5 (`ACCESS_NETWORK_STATE`, `INTERNET`, `FINE_LOCATION`, `COARSE_LOCATION`, `CALL_PHONE`) |
 | `.claude/memory/project_farmapp.md` | Actualizado: P1-P8 marcados como completados, pendientes son operativos |
 
 ### 4. Limpieza
 | Archivo | Acción | Razón |
 |---------|--------|-------|
-| `PROMPT_MAESTRO_CONTINUIDAD.md` | **Eliminado** | Contenía información de otro proyecto (portfolio React) mezclada con FarmApp; estaba desactualizado; reemplazado por los 4 archivos nuevos |
+| `PROMPT_MAESTRO_CONTINUIDAD.md` | **Eliminado** | Contenía información de otro proyecto (portfolio React) mezclada con FarmApp; reemplazado por los 4 archivos nuevos |
+| `FarmApp/*.png` (19 archivos) | **Eliminados** | Capturas de desarrollo basura (~5 MB) |
+| `nul` | **Eliminado** | Artefacto de Windows (salida de `dir` redirigida a `nul`) |
 
-### 5. Hallazgos durante la auditoría
-- **Código muerto detectado:** `AppConstants.cs:29-31` define `PrefRadioKm`, `PrefTemaApp`, `PrefUltimaComuna` sin que ningún otro archivo las use
-- **Repositorio git:** inicializado en esta sesión, commit `8cf2ec2`, sin remote
+### 5. Repositorio git
+| Acción | Detalle |
+|--------|---------|
+| `git init` | Repositorio inicializado desde cero |
+| `.gitignore` creado | Excluye `bin/`, `obj/`, `.vs/`, `*.keystore`, `FarmApp/*.png`, `nul` |
+| Rama `master` → `main` | Renombrada con `git branch -m master main` |
+| Remote configurado | `origin` → `https://github.com/HectorRiquelme/farmapp.git` |
+| Push | 2 commits en `main`: `8cf2ec2` (MVP) + `ca2bd5a` (docs) |
+
+### 6. Hallazgos
+- **Código muerto:** `AppConstants.cs:29-31` define `PrefRadioKm`, `PrefTemaApp`, `PrefUltimaComuna` sin uso en ningún archivo
+- **`dotnet_bot.png`** sigue en `Resources/Images/` — asset default de MAUI, no se usa en la app
 
 ---
 
@@ -42,9 +55,9 @@
 
 ### 1. [ALTA] Política de privacidad ← SIGUIENTE PASO
 - **Qué:** Crear documento de política de privacidad accesible vía URL pública
-- **Archivo:** Crear `privacy-policy.html` o publicar en GitHub Pages / sitio externo
+- **Archivo:** Crear `privacy-policy.html` o `docs/privacy-policy.md` y publicar vía GitHub Pages
 - **Por qué:** Google Play la exige obligatoriamente para apps que usan ubicación
-- **Bloqueante para:** Publicar en Play Store
+- **Bloqueante para:** Publicar en Play Store (paso 4)
 - **Contenido mínimo a cubrir:**
   - Datos recopilados: ubicación del dispositivo (solo mientras se usa, nunca almacenada en servidor)
   - Datos NO recopilados: información personal, cuentas, contactos, analytics
@@ -54,7 +67,7 @@
   - Sin cookies, sin tracking, sin publicidad
   - Contacto del desarrollador
 - **Decisiones del usuario necesarias:**
-  - Dónde publicar la política (GitHub Pages, hosting propio, otro)
+  - Dónde publicar la política (GitHub Pages del mismo repo, hosting propio, otro)
   - Email de contacto para la política
 
 ### 2. [ALTA] Generar AAB (Android App Bundle)
@@ -73,7 +86,7 @@
 
 ### 3. [ALTA] Validación en dispositivo físico
 - **Qué:** Instalar APK/AAB en Samsung S23 Ultra y/o Xiaomi MIUI
-- **Archivo:** No requiere cambios
+- **Archivo:** No requiere cambios de código
 - **Comando:** `adb install -r <ruta-al-apk-firmado>`
 - **Checklist de verificación:**
   - [ ] Permiso de ubicación se solicita correctamente
@@ -89,9 +102,10 @@
 ### 4. [ALTA] Configuración Google Play Console
 - **Qué:** Crear la ficha completa de la app
 - **Archivo:** No requiere cambios de código
+- **Depende de:** Paso 1 (política de privacidad) + Paso 2 (AAB)
 - **Requisitos:**
-  - AAB firmado (depende del paso 2)
-  - Política de privacidad con URL pública (depende del paso 1)
+  - AAB firmado
+  - Política de privacidad con URL pública
   - Data Safety form:
     - Ubicación: recopilada, no compartida, procesada localmente
     - Datos de uso de la app: no recopilados
@@ -109,17 +123,16 @@
   - ¿Distribución solo Chile o global?
   - ¿App gratuita? (una vez marcada como gratuita, no se puede cambiar a de pago)
 
-### 5. [BAJA] Crear remote en GitHub
-- **Qué:** Git inicializado con commit `8cf2ec2`, pero sin remote configurado
-- **Estado actual:** 1 commit en rama `master`, `.gitignore` configurado (excluye bin/, obj/, .vs/, *.keystore, screenshots)
-- **Comando:** `gh repo create farmapp --private --source=. --push` (o público si se prefiere)
-- **Decisión del usuario:** ¿Público o privado?
-
-### 6. [BAJA] Limpiar código muerto
+### 5. [BAJA] Limpiar código muerto
 - **Qué:** 3 constantes definidas sin uso
 - **Archivo:** `FarmApp/Constants/AppConstants.cs:29-31`
 - **Constantes:** `PrefRadioKm`, `PrefTemaApp`, `PrefUltimaComuna`
 - **Acción:** Eliminar si no se planea usarlas, o dejar si se implementarán preferencias de usuario en v2
+
+### 6. [BAJA] Eliminar dotnet_bot.png
+- **Qué:** Asset default de la plantilla MAUI, no se usa en la app
+- **Archivo:** `FarmApp/Resources/Images/dotnet_bot.png`
+- **Acción:** Eliminar y quitar la referencia en `FarmApp.csproj:51`
 
 ---
 
@@ -139,14 +152,19 @@
 
 ## Tareas completadas (referencia histórica)
 
-### Sesión 2026-03-22 — Sistema de contexto
+### Sesión 2026-03-23 — Contexto + Git
 - [x] Auditoría completa del proyecto (todos los archivos fuente leídos)
 - [x] `CLAUDE.md` creado con reglas, build, arquitectura, dependencias
 - [x] `AGENTS.md` reescrito (reemplazó contenido de otro proyecto)
-- [x] `PROJECT_CONTEXT.md` creado con contexto completo + 3 correcciones post-auditoría
+- [x] `PROJECT_CONTEXT.md` creado + 5 correcciones post-auditoría
 - [x] `NEXT_STEPS.md` creado con pendientes reales
 - [x] `.claude/memory/project_farmapp.md` actualizado
-- [x] `PROMPT_MAESTRO_CONTINUIDAD.md` eliminado (reemplazado por los 4 archivos nuevos)
+- [x] `PROMPT_MAESTRO_CONTINUIDAD.md` eliminado
+- [x] 19 capturas `.png` basura eliminadas + archivo `nul` eliminado
+- [x] `.gitignore` creado (bin, obj, vs, keystore, screenshots)
+- [x] Git inicializado, rama renombrada `master` → `main`
+- [x] Remote configurado: `origin` → `github.com/HectorRiquelme/farmapp.git`
+- [x] Push: 2 commits en `main` (`8cf2ec2`, `ca2bd5a`)
 
 ### Previo a esta sesión — Código
 - [x] P1: Hardening SQLite — `DatabaseConnection` singleton en `Infrastructure/Cache/DatabaseConnection.cs`
@@ -162,5 +180,5 @@
 ## Siguiente paso exacto
 
 **Crear la política de privacidad.** Es el bloqueante #1 para Play Store y no depende de ningún otro paso. Necesito que definas:
-1. ¿Dónde publicarla? (GitHub Pages, hosting propio, otro)
+1. ¿Dónde publicarla? (GitHub Pages del repo `farmapp`, hosting propio, otro)
 2. ¿Email de contacto para incluir en la política?
