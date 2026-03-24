@@ -29,46 +29,52 @@
 | `PROJECT_CONTEXT.md` | `AndroidManifest.xml` decía 3 permisos → corregido a 5 (`ACCESS_NETWORK_STATE`, `INTERNET`, `FINE_LOCATION`, `COARSE_LOCATION`, `CALL_PHONE`) |
 | `.claude/memory/project_farmapp.md` | Actualizado: P1-P8 marcados como completados, pendientes son operativos |
 
-### 4. Limpieza
+### 4. Política de privacidad
+| Archivo | Acción |
+|---------|--------|
+| `docs/privacy-policy.html` | **Creado** — HTML completo con 9 secciones, tema dark, contacto hectorariquelmec@gmail.com |
+| Commit | `2deb2ff` — `docs: agregar política de privacidad para Google Play` |
+| **Falta** | Activar GitHub Pages para que tenga URL pública (`https://hectorriquelme.github.io/farmapp/privacy-policy.html`) |
+
+### 5. Renombramiento "Farmacia Abierta" → "FarmApp"
+| Archivo | Qué se cambió |
+|---------|---------------|
+| `FarmApp/FarmApp.csproj` | `<ApplicationTitle>` → `FarmApp` |
+| `FarmApp/AppShell.xaml` | `Title=` → `FarmApp` |
+| `docs/privacy-policy.html` | 5 referencias actualizadas |
+| `CLAUDE.md` | Título corregido |
+| `AGENTS.md` | Título corregido |
+| `PROJECT_CONTEXT.md` | Título y nombre corregidos |
+| `NEXT_STEPS.md` | Título corregido |
+| `.claude/memory/feedback_coding_rules.md` | Regla #15 agregada: nombre es FarmApp, no "Farmacia Abierta" |
+| Commit | `ae9845a` — `fix: renombrar app de "Farmacia Abierta" a "FarmApp"` |
+
+### 6. Limpieza
 | Archivo | Acción | Razón |
 |---------|--------|-------|
 | `PROMPT_MAESTRO_CONTINUIDAD.md` | **Eliminado** | Contenía información de otro proyecto (portfolio React) mezclada con FarmApp; reemplazado por los 4 archivos nuevos |
 | `FarmApp/*.png` (19 archivos) | **Eliminados** | Capturas de desarrollo basura (~5 MB) |
-| `nul` | **Eliminado** | Artefacto de Windows (salida de `dir` redirigida a `nul`) |
+| `nul` | **Eliminado** | Artefacto de Windows |
 
-### 5. Repositorio git
+### 7. Repositorio git
 | Acción | Detalle |
 |--------|---------|
 | `git init` | Repositorio inicializado desde cero |
 | `.gitignore` creado | Excluye `bin/`, `obj/`, `.vs/`, `*.keystore`, `FarmApp/*.png`, `nul` |
 | Rama `master` → `main` | Renombrada con `git branch -m master main` |
 | Remote configurado | `origin` → `https://github.com/HectorRiquelme/farmapp.git` |
-| Push | 2 commits en `main`: `8cf2ec2` (MVP) + `ca2bd5a` (docs) |
-
-### 6. Hallazgos
-- **Código muerto:** `AppConstants.cs:29-31` define `PrefRadioKm`, `PrefTemaApp`, `PrefUltimaComuna` sin uso en ningún archivo
-- **`dotnet_bot.png`** sigue en `Resources/Images/` — asset default de MAUI, no se usa en la app
+| 5 commits en `main` | `8cf2ec2` → `ca2bd5a` → `0c0c8dd` → `2deb2ff` → `ae9845a` |
 
 ---
 
 ## Qué quedó pendiente
 
-### 1. [ALTA] Política de privacidad ← SIGUIENTE PASO
-- **Qué:** Crear documento de política de privacidad accesible vía URL pública
-- **Archivo:** Crear `privacy-policy.html` o `docs/privacy-policy.md` y publicar vía GitHub Pages
-- **Por qué:** Google Play la exige obligatoriamente para apps que usan ubicación
-- **Bloqueante para:** Publicar en Play Store (paso 4)
-- **Contenido mínimo a cubrir:**
-  - Datos recopilados: ubicación del dispositivo (solo mientras se usa, nunca almacenada en servidor)
-  - Datos NO recopilados: información personal, cuentas, contactos, analytics
-  - Procesamiento 100% local (no hay backend propio)
-  - APIs de terceros: MINSAL (datos públicos de farmacias), Nominatim OSM (geocodificación, IP visible)
-  - Caché local: SQLite con farmacias y coordenadas geocodificadas (auto-limpieza cada 2 días)
-  - Sin cookies, sin tracking, sin publicidad
-  - Contacto del desarrollador
-- **Decisiones del usuario necesarias:**
-  - Dónde publicar la política (GitHub Pages del mismo repo, hosting propio, otro)
-  - Email de contacto para la política
+### 1. [ALTA] Activar GitHub Pages ← SIGUIENTE PASO
+- **Qué:** Publicar `docs/privacy-policy.html` con URL pública
+- **Archivo:** No requiere cambios de código — se configura en GitHub
+- **Cómo:** Ir a `github.com/HectorRiquelme/farmapp` → Settings → Pages → Source: `main` branch, carpeta `/docs`
+- **Resultado esperado:** `https://hectorriquelme.github.io/farmapp/privacy-policy.html` accesible públicamente
+- **Bloqueante para:** Paso 4 (Play Console necesita URL de política de privacidad)
 
 ### 2. [ALTA] Generar AAB (Android App Bundle)
 - **Qué:** Play Store requiere AAB, no APK
@@ -85,7 +91,7 @@
 - **Output esperado:** `FarmApp/bin/Release/net8.0-android/android-arm64/cl.farmapp.farmaciaabierta-Signed.aab`
 
 ### 3. [ALTA] Validación en dispositivo físico
-- **Qué:** Instalar APK/AAB en Samsung S23 Ultra y/o Xiaomi MIUI
+- **Qué:** Instalar APK en Samsung S23 Ultra y/o Xiaomi MIUI
 - **Archivo:** No requiere cambios de código
 - **Comando:** `adb install -r <ruta-al-apk-firmado>`
 - **Checklist de verificación:**
@@ -102,7 +108,7 @@
 ### 4. [ALTA] Configuración Google Play Console
 - **Qué:** Crear la ficha completa de la app
 - **Archivo:** No requiere cambios de código
-- **Depende de:** Paso 1 (política de privacidad) + Paso 2 (AAB)
+- **Depende de:** Paso 1 (URL política) + Paso 2 (AAB)
 - **Requisitos:**
   - AAB firmado
   - Política de privacidad con URL pública
@@ -152,7 +158,7 @@
 
 ## Tareas completadas (referencia histórica)
 
-### Sesión 2026-03-23 — Contexto + Git
+### Sesión 2026-03-23 — Contexto + Git + Docs
 - [x] Auditoría completa del proyecto (todos los archivos fuente leídos)
 - [x] `CLAUDE.md` creado con reglas, build, arquitectura, dependencias
 - [x] `AGENTS.md` reescrito (reemplazó contenido de otro proyecto)
@@ -164,7 +170,10 @@
 - [x] `.gitignore` creado (bin, obj, vs, keystore, screenshots)
 - [x] Git inicializado, rama renombrada `master` → `main`
 - [x] Remote configurado: `origin` → `github.com/HectorRiquelme/farmapp.git`
-- [x] Push: 2 commits en `main` (`8cf2ec2`, `ca2bd5a`)
+- [x] `docs/privacy-policy.html` creado (política de privacidad para Play Store)
+- [x] Renombrado "Farmacia Abierta" → "FarmApp" en `.csproj`, `AppShell.xaml`, `docs/`, 4 archivos `.md`
+- [x] Regla #15 agregada en `.claude/memory`: nombre es FarmApp, no "Farmacia Abierta"
+- [x] 5 commits pusheados a `main` en GitHub
 
 ### Previo a esta sesión — Código
 - [x] P1: Hardening SQLite — `DatabaseConnection` singleton en `Infrastructure/Cache/DatabaseConnection.cs`
@@ -179,6 +188,9 @@
 
 ## Siguiente paso exacto
 
-**Crear la política de privacidad.** Es el bloqueante #1 para Play Store y no depende de ningún otro paso. Necesito que definas:
-1. ¿Dónde publicarla? (GitHub Pages del repo `farmapp`, hosting propio, otro)
-2. ¿Email de contacto para incluir en la política?
+**Activar GitHub Pages** en el repo `farmapp`:
+1. Ir a `https://github.com/HectorRiquelme/farmapp/settings/pages`
+2. Source: Deploy from a branch → Branch: `main` → Folder: `/docs`
+3. Guardar → esperar ~1 minuto
+4. Verificar que `https://hectorriquelme.github.io/farmapp/privacy-policy.html` carga correctamente
+5. Con esa URL lista, ya se puede completar la ficha en Play Console
