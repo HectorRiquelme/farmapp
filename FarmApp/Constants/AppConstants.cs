@@ -10,7 +10,7 @@ public static class AppConstants
 
     // Geocodificación (Nominatim / OpenStreetMap — uso permitido con User-Agent correcto)
     public const string NominatimBaseUrl = "https://nominatim.openstreetmap.org/search";
-    public const string NominatimUserAgent = "FarmApp/1.0 (farmapp@ejemplo.cl)";
+    public const string NominatimUserAgent = "FarmApp/1.0 (hectorariquelmec@gmail.com)";
 
     // Caché
     public const int CacheDiasMaximos = 2;

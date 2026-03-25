@@ -30,7 +30,7 @@ public partial class HomeViewModel : BaseViewModel
         _buscarFarmacias = buscarFarmacias;
         _locationService = locationService;
         _logger = logger;
-        Titulo = "Farmacia Abierta";
+        Titulo = "FarmApp";
     }
 
     [RelayCommand]
