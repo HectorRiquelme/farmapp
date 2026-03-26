@@ -45,6 +45,9 @@ FarmApp/
 | UserAppTheme = Unspecified | Respetar tema del sistema (bug anterior forzaba dark) |
 | SQLite con DatabaseConnection singleton | Evita contención por conexiones concurrentes |
 | Geocodificación con Take(10) + timeout 30s | Respetar rate limit Nominatim y batería |
+| R8 + Trimming en Release | Ofuscación + reducción de tamaño AAB/APK |
+| Nombre "FarmApp" (no "Farmacia Abierta") | Corregido por el usuario; aplicar en todo nuevo código/doc |
+| Categoría Play Store: Mapas y navegación | Evita requisitos médicos extras de categoría Medicina |
 
 ## Flujo de búsqueda (referencia rápida)
 

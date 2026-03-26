@@ -8,7 +8,7 @@ App .NET MAUI 8 para encontrar farmacias de turno nocturno en Chile. Consume la 
 
 - **App ID:** `cl.farmapp.farmaciaabierta`
 - **Target principal:** Android (arm64), iOS incluido
-- **Estado:** MVP funcional. Build release firmado. Pendiente publicación en Play Store.
+- **Estado:** MVP funcional. Build release firmado con R8+Trimming. Pendiente correcciones pre-Play Store y publicación.
 
 ## Build y validación
 
@@ -16,9 +16,18 @@ App .NET MAUI 8 para encontrar farmacias de turno nocturno en Chile. Consume la 
 # Build Android debug (verificación rápida)
 dotnet build FarmApp/FarmApp.csproj -f net8.0-android -c Debug
 
-# Build Android release firmado (arm64)
+# Build Android release firmado (arm64) — APK
 dotnet publish FarmApp/FarmApp.csproj -f net8.0-android -c Release -p:AndroidKeyStore=true -p:AndroidSigningKeyStore=../farmapp-release.keystore -p:AndroidSigningKeyAlias=farmapp-key
+
+# Build Android release firmado — AAB (requerido por Play Store)
+dotnet publish FarmApp/FarmApp.csproj -f net8.0-android -c Release -p:AndroidPackageFormat=aab -p:AndroidKeyStore=true -p:AndroidSigningKeyStore=../farmapp-release.keystore -p:AndroidSigningKeyAlias=farmapp-key
 ```
+
+## Protección de código (Release)
+
+- **R8 (AndroidLinkMode=SdkOnly):** ofusca nombres Java, elimina código muerto del SDK
+- **Trimming (PublishTrimmed + TrimMode=link):** elimina código .NET no utilizado
+- Configurado en `FarmApp.csproj` bajo `<PropertyGroup Condition="'$(Configuration)' == 'Release'">`
 
 ## Reglas obligatorias
 
@@ -36,6 +45,7 @@ dotnet publish FarmApp/FarmApp.csproj -f net8.0-android -c Release -p:AndroidKey
 12. Colores de estado fijos: verde `#22C55E` (abierta), amarillo `#F59E0B` (posiblemente), azul `#3B82F6` (urgencia), gris `#6B7280` (no confirmado)
 13. Validar con build Android tras cada cambio
 14. Referenciar `archivo.cs:línea` al citar código
+15. El nombre de la app es **FarmApp**, NO "Farmacia Abierta"
 
 ## Arquitectura
 

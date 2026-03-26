@@ -1,6 +1,6 @@
 # PROJECT_CONTEXT.md — FarmApp
 
-> Contexto completo del proyecto. Última actualización: 2026-03-22.
+> Contexto completo del proyecto. Última actualización: 2026-03-24.
 
 ## 1. Identidad
 
@@ -11,7 +11,7 @@
 - **Target prioritario:** Android (API 21+, arm64)
 - **Objetivo:** Encontrar la farmacia de turno nocturno más cercana en Chile usando datos oficiales MINSAL
 
-## 2. Estado actual (verificado 2026-03-22)
+## 2. Estado actual (verificado 2026-03-24)
 
 ### Completado
 - [x] UI completa: HomePage, ResultadosPage, DetallePage
@@ -28,12 +28,21 @@
 - [x] LimpiarRegistrosViejosAsync invocado en BuscarFarmaciasUseCase
 - [x] FarmaciaCardDestacada eliminada (no existe en el proyecto)
 - [x] Build Android debug y release firmado: 0 errores, 0 warnings
+- [x] Política de privacidad creada (`docs/privacy-policy.html`)
+- [x] Renombramiento "Farmacia Abierta" → "FarmApp" en csproj, AppShell, docs, contexto
+- [x] R8 + Trimming activado en Release (ofuscación + optimización)
+- [x] Git inicializado, remote configurado en GitHub
 
-### Pendiente
+### Pendiente — correcciones pre-Play Store
+- [ ] `HomeViewModel.cs:33` — `Titulo = "Farmacia Abierta"` debe ser `"FarmApp"` (referencia interna restante)
+- [ ] `AppConstants.cs:13` — NominatimUserAgent usa email falso `farmapp@ejemplo.cl`, debe ser `hectorariquelmec@gmail.com`
+- [ ] `FarmApp.csproj:60` + `Resources/Images/dotnet_bot.png` — asset default MAUI sin uso, eliminar
+
+### Pendiente — operativo
+- [ ] Activar GitHub Pages para URL pública de política de privacidad
+- [ ] Generar AAB (Android App Bundle) firmado
 - [ ] Validación en dispositivo físico (Samsung S23 Ultra / Xiaomi MIUI)
-- [ ] Configuración Play Console (Data Safety, capturas, descripción)
-- [ ] Política de privacidad (requerida por Google Play)
-- [ ] AAB (Android App Bundle) para Play Store (actualmente se genera APK)
+- [ ] Configuración Play Console (Data Safety, capturas, descripción, IARC)
 
 ## 3. Stack tecnológico
 
@@ -240,6 +249,12 @@ FarmApp/
 
 ## 10. Infraestructura de deploy
 
-- **Keystore release:** `farmapp-release.keystore` (raíz del proyecto)
+- **Keystore release:** `farmapp-release.keystore` (raíz del proyecto, excluido de git)
 - **APK firmado:** `FarmApp/bin/Release/net8.0-android/android-arm64/cl.farmapp.farmaciaabierta-Signed.apk`
+- **AAB:** Pendiente de generar con `-p:AndroidPackageFormat=aab`
+- **R8 + Trimming:** Activado en Release (`FarmApp.csproj:43-49`)
+- **.NET SDK:** 8.0.400, workload android 34.0.154 (targetSdk 34, cumple requisito Google Play ≥34)
+- **GitHub:** `https://github.com/HectorRiquelme/farmapp.git` — rama `main`
+- **Política de privacidad:** `docs/privacy-policy.html` (pendiente activar GitHub Pages)
 - **Play Console:** No configurada aún
+- **Contacto desarrollador:** hectorariquelmec@gmail.com
