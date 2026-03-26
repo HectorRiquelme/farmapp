@@ -40,12 +40,10 @@
 	</PropertyGroup>
 
 	<!-- Protección y optimización en Release -->
+	<!-- R8 (AndroidLinkMode=SdkOnly): ofusca nombres Java y elimina código muerto del SDK Android -->
+	<!-- Trimming .NET no se usa: System.Text.Json y sqlite-net-pcl dependen de reflexión -->
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<AndroidLinkMode>SdkOnly</AndroidLinkMode>
-		<PublishTrimmed>true</PublishTrimmed>
-		<TrimMode>link</TrimMode>
-		<RunAOTCompilation>false</RunAOTCompilation>
-		<AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
 	</PropertyGroup>
 
 	<ItemGroup>

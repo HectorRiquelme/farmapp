@@ -23,3 +23,5 @@ nul
 
 # Screenshots de desarrollo
 FarmApp/*.png
+farmapp-release.keystore.bak
+test_screenshots/
