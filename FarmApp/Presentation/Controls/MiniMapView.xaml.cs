@@ -80,11 +80,34 @@ public partial class MiniMapView : ContentView
         LoadingIndicator.IsRunning = false;
         LoadingIndicator.IsVisible = false;
 
+        // Sincronizar tema del mapa con el tema del sistema
+        _ = AplicarTemaActualAsync();
+
         if (_pendingFarmacias != null)
         {
             var f = _pendingFarmacias;
             _pendingFarmacias = null;
             _ = EnviarFarmaciasAlMapaAsync(f);
+        }
+    }
+
+    /// <summary>
+    /// Detecta el tema actual del sistema y lo aplica al mapa Leaflet.
+    /// </summary>
+    private async Task AplicarTemaActualAsync()
+    {
+        if (!_mapLoaded) return;
+
+        var tema = Microsoft.Maui.ApplicationModel.AppInfo.Current.RequestedTheme;
+        var valor = tema == AppTheme.Light ? "light" : "dark";
+
+        try
+        {
+            await MapWebView.EvaluateJavaScriptAsync($"setTheme('{valor}')");
+        }
+        catch
+        {
+            // Silencioso si el mapa no está disponible
         }
     }
 
