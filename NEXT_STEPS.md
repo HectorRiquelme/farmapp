@@ -1,10 +1,79 @@
 # NEXT_STEPS.md — FarmApp
 
-> Pendientes reales verificados contra el código. Última actualización: 2026-03-23.
+> Pendientes reales verificados contra el código. Última actualización: 2026-03-26.
 
 ---
 
-## Qué se hizo en esta sesión (2026-03-23)
+## Qué se hizo en sesión 2026-03-26
+
+### 1. Correcciones pre-Play Store aplicadas (las 3 de la auditoría anterior)
+| # | Archivo | Qué se corrigió | Verificado |
+|---|---------|-----------------|-----------|
+| 1 | `HomeViewModel.cs:33` | `Titulo = "Farmacia Abierta"` → `"FarmApp"` | ✅ Confirmado en auditoría |
+| 2 | `AppConstants.cs:13` | Email falso `farmapp@ejemplo.cl` → `hectorariquelmec@gmail.com` | ✅ Confirmado en auditoría |
+| 3 | `Resources/Images/dotnet_bot.png` | Eliminado asset default MAUI | ✅ Solo queda `logo_farmapp.svg` |
+| — | Commit | `7a39deb` — `fix: correcciones pre-Play Store detectadas en auditoría` | ✅ Pusheado |
+
+### 2. Keystore creado y AAB generado
+| Paso | Detalle |
+|------|---------|
+| Keystore | `farmapp-release.keystore` creado con `keytool` (RSA 2048, validez 10000 días, CN=Hector Riquelme) |
+| AAB firmado | `cl.farmapp.farmaciaabierta-Signed.aab` — **23 MB** |
+| Ubicación | `FarmApp/bin/Release/net8.0-android/cl.farmapp.farmaciaabierta-Signed.aab` |
+
+### 3. Auditoría QA final — APROBADA
+| Requisito | Estado |
+|-----------|--------|
+| Nombre = "FarmApp" en todo el código | ✅ |
+| Permisos Android (5) + iOS declarados | ✅ |
+| Política de privacidad con nombre correcto | ✅ |
+| R8 + Trimming en Release | ✅ |
+| Icono y splash personalizados (no default) | ✅ |
+| Sin assets basura | ✅ |
+| User-Agent con email real | ✅ |
+| Sin auth / analytics / ads / compras | ✅ |
+| AAB firmado y generado | ✅ |
+| 0 referencias "Farmacia Abierta" en código fuente | ✅ |
+
+---
+
+## Qué se hizo en sesión 2026-03-24
+
+### 1. R8 + Trimming activado en Release
+- **Archivo:** `FarmApp/FarmApp.csproj:43-49`
+- **Qué:** `AndroidLinkMode=SdkOnly`, `PublishTrimmed=true`, `TrimMode=link`
+- **Commit:** `cca698b`
+- **Build verificado:** 0 errores, 0 warnings
+
+### 2. Auditoría contra políticas Google Play
+Se verificó la app contra requisitos de publicación. Resultado:
+
+| Requisito | Estado |
+|-----------|--------|
+| Permisos declarados + runtime request | ✅ OK |
+| Sin datos personales / login / analytics | ✅ OK |
+| Política de privacidad | ✅ Creada |
+| Sin publicidad / compras in-app | ✅ OK |
+| Icono y splash personalizados | ✅ OK |
+| targetSdk ≥ 34 | ✅ OK (workload android 34.0.154) |
+| R8 + Trimming | ✅ Activado |
+
+### 3. Problemas detectados (pendientes de corrección)
+| Severidad | Archivo | Problema |
+|-----------|---------|----------|
+| 🔴 Obligatorio | `HomeViewModel.cs:33` | `Titulo = "Farmacia Abierta"` — debe ser `"FarmApp"` |
+| 🟡 Recomendado | `AppConstants.cs:13` | User-Agent con email falso `farmapp@ejemplo.cl` → debe ser `hectorariquelmec@gmail.com` |
+| 🟡 Recomendado | `FarmApp.csproj:60` + `Resources/Images/dotnet_bot.png` | Asset default MAUI sin uso, se empaqueta en el AAB |
+
+### 4. Contexto persistente actualizado
+- `CLAUDE.md` — agregado: build AAB, R8+Trimming, regla #15 nombre
+- `AGENTS.md` — agregado: 3 decisiones fijas nuevas
+- `PROJECT_CONTEXT.md` — estado actual actualizado a 2026-03-24, deploy ampliado
+- `NEXT_STEPS.md` — esta actualización
+
+---
+
+## Qué se hizo en sesión 2026-03-23
 
 ### 1. Auditoría completa del proyecto
 - Se leyeron **todos** los archivos fuente (.cs, .xaml, .csproj, .html, .xml, .plist)
@@ -69,28 +138,7 @@
 
 ## Qué quedó pendiente
 
-### 1. [ALTA] Activar GitHub Pages ← SIGUIENTE PASO
-- **Qué:** Publicar `docs/privacy-policy.html` con URL pública
-- **Archivo:** No requiere cambios de código — se configura en GitHub
-- **Cómo:** Ir a `github.com/HectorRiquelme/farmapp` → Settings → Pages → Source: `main` branch, carpeta `/docs`
-- **Resultado esperado:** `https://hectorriquelme.github.io/farmapp/privacy-policy.html` accesible públicamente
-- **Bloqueante para:** Paso 4 (Play Console necesita URL de política de privacidad)
-
-### 2. [ALTA] Generar AAB (Android App Bundle)
-- **Qué:** Play Store requiere AAB, no APK
-- **Archivo:** No requiere cambio de código, solo comando de build
-- **Comando:**
-  ```bash
-  dotnet publish FarmApp/FarmApp.csproj -f net8.0-android -c Release \
-    -p:AndroidPackageFormat=aab \
-    -p:AndroidKeyStore=true \
-    -p:AndroidSigningKeyStore=../farmapp-release.keystore \
-    -p:AndroidSigningKeyAlias=farmapp-key
-  ```
-- **Prerequisito:** Tener la contraseña del keystore disponible
-- **Output esperado:** `FarmApp/bin/Release/net8.0-android/android-arm64/cl.farmapp.farmaciaabierta-Signed.aab`
-
-### 3. [ALTA] Validación en dispositivo físico
+### 1. [ALTA] Validación en dispositivo físico ← SIGUIENTE PASO
 - **Qué:** Instalar APK en Samsung S23 Ultra y/o Xiaomi MIUI
 - **Archivo:** No requiere cambios de código
 - **Comando:** `adb install -r <ruta-al-apk-firmado>`
@@ -105,7 +153,7 @@
   - [ ] Sin conexión: muestra caché con advertencia y fecha
   - [ ] Slider de radio re-filtra la lista y recarga el mapa
 
-### 4. [ALTA] Configuración Google Play Console
+### 2. [ALTA] Configuración Google Play Console
 - **Qué:** Crear la ficha completa de la app
 - **Archivo:** No requiere cambios de código
 - **Depende de:** Paso 1 (URL política) + Paso 2 (AAB)
@@ -121,7 +169,7 @@
   - Descripción larga (≤4000 chars): explicar funcionalidades, fuente MINSAL, offline
   - Icono de alta resolución: 512×512 PNG (sin alfa)
   - Gráfico de funciones: 1024×500 PNG o JPG
-  - Categoría: Salud y bienestar → Medicina
+  - Categoría: **Mapas y navegación** (evita requisitos médicos extras de categoría Medicina)
   - Clasificación de contenido: completar cuestionario IARC
   - Países: Chile (o todos)
 - **Decisiones del usuario necesarias:**
@@ -129,16 +177,11 @@
   - ¿Distribución solo Chile o global?
   - ¿App gratuita? (una vez marcada como gratuita, no se puede cambiar a de pago)
 
-### 5. [BAJA] Limpiar código muerto
+### 3. [BAJA] Limpiar código muerto
 - **Qué:** 3 constantes definidas sin uso
 - **Archivo:** `FarmApp/Constants/AppConstants.cs:29-31`
 - **Constantes:** `PrefRadioKm`, `PrefTemaApp`, `PrefUltimaComuna`
 - **Acción:** Eliminar si no se planea usarlas, o dejar si se implementarán preferencias de usuario en v2
-
-### 6. [BAJA] Eliminar dotnet_bot.png
-- **Qué:** Asset default de la plantilla MAUI, no se usa en la app
-- **Archivo:** `FarmApp/Resources/Images/dotnet_bot.png`
-- **Acción:** Eliminar y quitar la referencia en `FarmApp.csproj:51`
 
 ---
 
@@ -157,6 +200,20 @@
 ---
 
 ## Tareas completadas (referencia histórica)
+
+### Sesión 2026-03-26 — Correcciones + AAB + Auditoría final
+- [x] 3 correcciones pre-Play Store aplicadas (HomeViewModel, AppConstants, dotnet_bot.png)
+- [x] Keystore creado (RSA 2048, 10000 días)
+- [x] AAB firmado generado (23 MB)
+- [x] GitHub Pages activado — política de privacidad en URL pública
+- [x] Auditoría QA final: todos los checks pasan
+- [x] `NEXT_STEPS.md` actualizado con estado real
+- [x] Commit `7a39deb` pusheado
+
+### Sesión 2026-03-24 — R8 + Auditoría Google Play
+- [x] R8 + Trimming activado en Release (`cca698b`)
+- [x] Auditoría contra políticas Google Play (detectó 3 problemas)
+- [x] 4 archivos de contexto actualizados
 
 ### Sesión 2026-03-23 — Contexto + Git + Docs
 - [x] Auditoría completa del proyecto (todos los archivos fuente leídos)
@@ -188,9 +245,13 @@
 
 ## Siguiente paso exacto
 
-**Activar GitHub Pages** en el repo `farmapp`:
-1. Ir a `https://github.com/HectorRiquelme/farmapp/settings/pages`
-2. Source: Deploy from a branch → Branch: `main` → Folder: `/docs`
-3. Guardar → esperar ~1 minuto
-4. Verificar que `https://hectorriquelme.github.io/farmapp/privacy-policy.html` carga correctamente
-5. Con esa URL lista, ya se puede completar la ficha en Play Console
+**Configurar Google Play Console:**
+1. Crear cuenta de desarrollador en [Play Console](https://play.google.com/console) ($25 USD único) — si no existe
+2. Crear nueva aplicación → nombre "FarmApp" → gratuita
+3. Subir AAB: `FarmApp/bin/Release/net8.0-android/cl.farmapp.farmaciaabierta-Signed.aab`
+4. Configurar ficha: descripción, capturas, icono 512x512, gráfico 1024x500
+5. Data Safety: ubicación recopilada (local, no compartida), sin cuenta de usuario
+6. Política de privacidad: `https://hectorriquelme.github.io/farmapp/privacy-policy.html`
+7. Clasificación IARC: completar cuestionario
+8. Categoría: Mapas y navegación
+9. Publicar en revisión
