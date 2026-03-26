@@ -18,22 +18,48 @@
 | Paso | Detalle |
 |------|---------|
 | Keystore | `farmapp-release.keystore` creado con `keytool` (RSA 2048, validez 10000 días, CN=Hector Riquelme) |
-| AAB firmado | `cl.farmapp.farmaciaabierta-Signed.aab` — **23 MB** |
+| AAB firmado | `cl.farmapp.farmaciaabierta-Signed.aab` — **36 MB** (sin trimming) |
 | Ubicación | `FarmApp/bin/Release/net8.0-android/cl.farmapp.farmaciaabierta-Signed.aab` |
 
-### 3. Auditoría QA final — APROBADA
+### 3. Testing en dispositivo real — Samsung S23 Ultra
+**Dispositivo:** Samsung S23 Ultra (`R5CX90WKZZM`) vía ADB
+
+| Test | Estado | Evidencia |
+|------|--------|-----------|
+| App abre correctamente | ✅ | Logo "FARMAPP", subtítulo, botón buscar |
+| Permiso GPS solicitado | ✅ | Diálogo "Necesitamos tu ubicación..." con botón "Permitir" |
+| Búsqueda con resultados | ✅ | "Farmacia Human & Pets", distancia 941m |
+| Mapa Leaflet con pines | ✅ | Pin verde con popup, tiles CartoDB Dark |
+| Badge "Abierta ahora" | ✅ | Verde, correctamente mostrado |
+| Tag "La más cercana" | ✅ | Visible en la tarjeta |
+| Distancia GPS real | ✅ | 941m calculados con Haversine |
+| Slider de radio | ✅ | Visible, 5km default |
+| Tema claro del sistema | ✅ | Se respeta correctamente |
+
+### 4. Bug crítico encontrado y corregido: Trimming rompe Release
+- **Síntoma:** Build Release con `PublishTrimmed=true` mostraba "Sin datos disponibles" aunque la API respondía 200
+- **Causa:** `System.Text.Json` y `sqlite-net-pcl` dependen de reflexión. El trimmer eliminaba la metadata necesaria para deserializar los DTOs de MIDAS y las entidades SQLite
+- **Diagnóstico:** Build Debug (sin trimming) funcionaba perfecto → confirmó que el trimmer era el culpable
+- **Solución:** Desactivar trimming .NET, mantener solo R8 (`AndroidLinkMode=SdkOnly`) para ofuscación Java
+- **Archivo:** `FarmApp/FarmApp.csproj:43-45`
+- **Commit:** `f9f6c0d`
+- **Impacto:** AAB pasó de 23 MB a 36 MB (aceptable para Play Store, límite es 150 MB)
+
+### 5. Auditoría QA final — APROBADA
 | Requisito | Estado |
 |-----------|--------|
 | Nombre = "FarmApp" en todo el código | ✅ |
 | Permisos Android (5) + iOS declarados | ✅ |
 | Política de privacidad con nombre correcto | ✅ |
-| R8 + Trimming en Release | ✅ |
+| R8 en Release (ofuscación Java) | ✅ |
+| Trimming desactivado (compatibilidad JSON/SQLite) | ✅ |
 | Icono y splash personalizados (no default) | ✅ |
 | Sin assets basura | ✅ |
 | User-Agent con email real | ✅ |
 | Sin auth / analytics / ads / compras | ✅ |
-| AAB firmado y generado | ✅ |
+| AAB firmado y generado (36 MB) | ✅ |
 | 0 referencias "Farmacia Abierta" en código fuente | ✅ |
+| Verificado en dispositivo físico Samsung S23 Ultra | ✅ |
 
 ---
 
@@ -138,22 +164,7 @@ Se verificó la app contra requisitos de publicación. Resultado:
 
 ## Qué quedó pendiente
 
-### 1. [ALTA] Validación en dispositivo físico ← SIGUIENTE PASO
-- **Qué:** Instalar APK en Samsung S23 Ultra y/o Xiaomi MIUI
-- **Archivo:** No requiere cambios de código
-- **Comando:** `adb install -r <ruta-al-apk-firmado>`
-- **Checklist de verificación:**
-  - [ ] Permiso de ubicación se solicita correctamente
-  - [ ] Mapa Leaflet carga y los pines son interactivos (tap abre popup)
-  - [ ] Scroll de lista no entra en conflicto con WebView (BindableLayout)
-  - [ ] Tema claro/oscuro se adapta al cambiar en ajustes del sistema
-  - [ ] Botón "Llamar" abre el dialer con número correcto
-  - [ ] Botón "Cómo llegar" abre Google Maps / app de mapas
-  - [ ] Botón "Copiar dirección" copia al portapapeles
-  - [ ] Sin conexión: muestra caché con advertencia y fecha
-  - [ ] Slider de radio re-filtra la lista y recarga el mapa
-
-### 2. [ALTA] Configuración Google Play Console
+### 1. [ALTA] Configuración Google Play Console ← SIGUIENTE PASO
 - **Qué:** Crear la ficha completa de la app
 - **Archivo:** No requiere cambios de código
 - **Depende de:** Paso 1 (URL política) + Paso 2 (AAB)
@@ -176,6 +187,15 @@ Se verificó la app contra requisitos de publicación. Resultado:
   - ¿Cuenta de Google Play Console existe o hay que crearla? (costo: $25 USD único)
   - ¿Distribución solo Chile o global?
   - ¿App gratuita? (una vez marcada como gratuita, no se puede cambiar a de pago)
+
+### 2. [ALTA] Testing manual pendiente (el usuario debe verificar en su teléfono)
+Los siguientes tests no pudieron completarse vía ADB (offset de coordenadas en Samsung):
+  - [ ] Botón "Ver detalle" abre pantalla de detalle
+  - [ ] Botón "Llamar" abre el dialer con número correcto
+  - [ ] Botón "Cómo llegar" / "Ir" abre Google Maps
+  - [ ] Botón "Copiar dirección" copia al portapapeles
+  - [ ] Sin conexión: muestra caché con advertencia y fecha
+  - [ ] Tema oscuro se adapta al cambiar en ajustes del sistema
 
 ### 3. [BAJA] Limpiar código muerto
 - **Qué:** 3 constantes definidas sin uso
@@ -201,14 +221,17 @@ Se verificó la app contra requisitos de publicación. Resultado:
 
 ## Tareas completadas (referencia histórica)
 
-### Sesión 2026-03-26 — Correcciones + AAB + Auditoría final
-- [x] 3 correcciones pre-Play Store aplicadas (HomeViewModel, AppConstants, dotnet_bot.png)
+### Sesión 2026-03-26 — Testing dispositivo real + Fix Trimming + AAB final
+- [x] 3 correcciones pre-Play Store aplicadas (`7a39deb`)
 - [x] Keystore creado (RSA 2048, 10000 días)
-- [x] AAB firmado generado (23 MB)
+- [x] Testing en Samsung S23 Ultra vía ADB: home, GPS, búsqueda, mapa, badges OK
+- [x] Bug crítico encontrado: Trimming .NET rompía deserialización JSON en Release
+- [x] Fix: desactivar trimming, mantener solo R8 (`f9f6c0d`)
+- [x] Re-test Release con R8-only: funciona correctamente
+- [x] AAB final generado: 36 MB (sin trimming, con R8)
 - [x] GitHub Pages activado — política de privacidad en URL pública
-- [x] Auditoría QA final: todos los checks pasan
-- [x] `NEXT_STEPS.md` actualizado con estado real
-- [x] Commit `7a39deb` pusheado
+- [x] Auditoría QA final aprobada: 12/12 checks pasan
+- [x] `NEXT_STEPS.md` actualizado
 
 ### Sesión 2026-03-24 — R8 + Auditoría Google Play
 - [x] R8 + Trimming activado en Release (`cca698b`)
@@ -245,13 +268,15 @@ Se verificó la app contra requisitos de publicación. Resultado:
 
 ## Siguiente paso exacto
 
-**Configurar Google Play Console:**
-1. Crear cuenta de desarrollador en [Play Console](https://play.google.com/console) ($25 USD único) — si no existe
-2. Crear nueva aplicación → nombre "FarmApp" → gratuita
-3. Subir AAB: `FarmApp/bin/Release/net8.0-android/cl.farmapp.farmaciaabierta-Signed.aab`
-4. Configurar ficha: descripción, capturas, icono 512x512, gráfico 1024x500
-5. Data Safety: ubicación recopilada (local, no compartida), sin cuenta de usuario
+**Configurar Google Play Console** (paso 1 arriba):
+1. Crear cuenta en [Play Console](https://play.google.com/console) ($25 USD único) — si no existe
+2. Crear app → nombre "FarmApp" → gratuita → categoría "Mapas y navegación"
+3. Subir AAB: `FarmApp/bin/Release/net8.0-android/cl.farmapp.farmaciaabierta-Signed.aab` (36 MB)
+4. Ficha de la tienda:
+   - Descripción corta: "Encuentra la farmacia de turno más cercana en Chile"
+   - Capturas: tomar screenshots del teléfono (mínimo 2)
+   - Icono 512x512 PNG + gráfico 1024x500
+5. Data Safety: ubicación (local, no compartida), sin cuenta, sin analytics
 6. Política de privacidad: `https://hectorriquelme.github.io/farmapp/privacy-policy.html`
 7. Clasificación IARC: completar cuestionario
-8. Categoría: Mapas y navegación
-9. Publicar en revisión
+8. Enviar a revisión (~1-3 días)
