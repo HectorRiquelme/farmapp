@@ -6,7 +6,7 @@
 
 - **Nombre:** FarmApp
 - **App ID:** `cl.farmapp.farmaciaabierta`
-- **Versión:** 1.0 (ApplicationVersion=1)
+- **Versión:** 1.0 (ApplicationVersion=4)
 - **Tipo:** App móvil multiplataforma (.NET MAUI 8)
 - **Target prioritario:** Android (API 21+, arm64)
 - **Objetivo:** Encontrar la farmacia de turno nocturno más cercana en Chile usando datos oficiales MINSAL
@@ -37,8 +37,9 @@
 - [x] Solicitud automática de permiso GPS (popup nativo Android)
 - [x] Respuesta táctil del mapa mejorada (propagación a toda la jerarquía)
 - [x] GitHub Pages activado — política de privacidad online
-- [x] AAB firmado generado (36 MB, con R8)
+- [x] AAB versionCode 4 con targetSdk 35 generado (36 MB, con R8) — listo para Play Store
 - [x] Verificado en dispositivo físico Samsung S23 Ultra
+- [x] targetSdkVersion=35 forzado vía `<uses-sdk>` en AndroidManifest + SDK en AppData
 
 ### Pendiente — operativo
 - [ ] Configuración Play Console (Data Safety, capturas, descripción, IARC)
