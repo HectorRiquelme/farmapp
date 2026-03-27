@@ -12,6 +12,7 @@ public partial class MiniMapView : ContentView
 {
     private bool _mapLoaded;
     private List<Farmacia>? _pendingFarmacias;
+    private (double Lat, double Lon)? _pendingUserLocation;
 
     private static readonly JsonSerializerOptions JsonOpts = new()
     {
@@ -115,6 +116,13 @@ public partial class MiniMapView : ContentView
             _pendingFarmacias = null;
             _ = EnviarFarmaciasAlMapaAsync(f);
         }
+
+        if (_pendingUserLocation != null)
+        {
+            var loc = _pendingUserLocation.Value;
+            _pendingUserLocation = null;
+            SetUserLocation(loc.Lat, loc.Lon);
+        }
     }
 
     /// <summary>
@@ -148,6 +156,24 @@ public partial class MiniMapView : ContentView
             return;
         }
         _ = EnviarFarmaciasAlMapaAsync(farmacias);
+    }
+
+    /// <summary>
+    /// Muestra un pin azul en la ubicación del usuario.
+    /// Si el mapa aún no está listo, guarda la ubicación para enviarla cuando lo esté.
+    /// </summary>
+    public void SetUserLocation(double? lat, double? lon)
+    {
+        if (lat == null || lon == null) return;
+
+        if (!_mapLoaded)
+        {
+            _pendingUserLocation = (lat.Value, lon.Value);
+            return;
+        }
+
+        _ = MapWebView.EvaluateJavaScriptAsync(
+            $"setUserLocation({lat.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {lon.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)})");
     }
 
     /// <summary>

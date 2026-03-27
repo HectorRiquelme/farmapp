@@ -68,10 +68,9 @@ public class MauiLocationService : ILocationService
         if (status == PermissionStatus.Granted)
             return true;
 
-        if (status == PermissionStatus.Denied)
-            return false;
-
-        // Solicitar permiso si no ha sido determinado
+        // Solicitar permiso siempre que no esté concedido
+        // (Android lo muestra como diálogo nativo la primera vez,
+        //  y en solicitudes posteriores si el usuario no marcó "No volver a preguntar")
         status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
         return status == PermissionStatus.Granted;
     }

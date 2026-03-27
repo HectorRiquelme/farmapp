@@ -1,6 +1,33 @@
 # NEXT_STEPS.md — FarmApp
 
-> Pendientes reales verificados contra el código. Última actualización: 2026-03-26.
+> Pendientes reales verificados contra el código. Última actualización: 2026-03-27.
+
+---
+
+## Qué se hizo en sesión 2026-03-27
+
+### 1. Mejoras UX del mapa y permisos
+| # | Archivo | Cambio |
+|---|---------|--------|
+| 1 | `HomeViewModel.cs` | Solicitud automática de permiso GPS al buscar (popup nativo Android) |
+| 2 | `MauiLocationService.cs` | Re-intento automático tras otorgar permiso sin forzar reinicio |
+| 3 | `farmacia_map.html` | Mapa reactivo al tema del sistema (tiles claros/oscuros + CSS) |
+| 4 | `farmacia_map.html` | Pin azul "Tu ubicación" con función `setUserLocation()` |
+| 5 | `MiniMapView.xaml.cs` | Envío pendiente de ubicación si el mapa aún no cargó (`_pendingUserLocation`) |
+| 6 | `MiniMapView.xaml.cs` | Propagación de bloqueo táctil a toda la jerarquía de vistas |
+| 7 | `ResultadosPage.xaml.cs` | Llamada a `SetUserLocation` tras cargar farmacias |
+| 8 | `BusquedaResultado.cs` | Propiedad `UbicacionUsuario` para pasar ubicación al mapa |
+| 9 | `BuscarFarmaciasUseCase.cs` | Pasa `ubicacionUsuario` en `BusquedaResultado.Exitoso()` |
+
+### 2. Limpieza de historial git
+- Eliminadas todas las líneas `Co-Authored-By` y referencias a herramientas de IA en commits
+- Force push aplicado
+
+### 3. Verificado en Samsung S23 Ultra
+- Permiso GPS: popup nativo aparece correctamente
+- Pin azul de ubicación: visible en el mapa
+- Tema claro/oscuro: tiles y UI se adaptan al sistema
+- Scroll del mapa: fluido tras fix de propagación táctil
 
 ---
 
