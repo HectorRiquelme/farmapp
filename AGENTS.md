@@ -51,13 +51,13 @@ FarmApp/
 
 ## Flujo de búsqueda (referencia rápida)
 
-1. `HomeViewModel` → solicita GPS → llama `BuscarFarmaciasUseCase.EjecutarAsync()`
+1. `HomeViewModel` → solicita permiso GPS (popup nativo) → obtiene ubicación → llama `BuscarFarmaciasUseCase.EjecutarAsync()`
 2. UseCase → verifica conectividad → API MIDAS o caché SQLite
 3. Normaliza DTOs → calcula estado apertura → calcula distancias Haversine
 4. Filtra por radio progresivo (5→15→50→200 km) → persiste en SQLite
 5. Geocodifica faltantes en background (máx 10, timeout 30s)
-6. Retorna `BusquedaResultado` → navega a `ResultadosPage`
-7. ResultadosPage → carga mapa Leaflet vía JS bridge
+6. Retorna `BusquedaResultado` (incluye `UbicacionUsuario`) → navega a `ResultadosPage`
+7. ResultadosPage → carga mapa Leaflet vía JS bridge + pin azul de ubicación del usuario
 
 ## Errores comunes a evitar
 
