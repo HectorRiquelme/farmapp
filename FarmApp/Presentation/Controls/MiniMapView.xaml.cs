@@ -22,6 +22,32 @@ public partial class MiniMapView : ContentView
     {
         InitializeComponent();
         _ = CargarHtmlAsync();
+
+#if ANDROID
+        // Evitar que el ScrollView padre (y todos los ancestros) intercepten
+        // gestos de pan/zoom sobre el mapa Leaflet.
+        MapWebView.HandlerChanged += (_, _) =>
+        {
+            if (MapWebView.Handler?.PlatformView is Android.Webkit.WebView androidWebView)
+            {
+                androidWebView.Touch += (sender, e) =>
+                {
+                    var bloquear = e.Event?.Action == Android.Views.MotionEventActions.Down
+                               || e.Event?.Action == Android.Views.MotionEventActions.Move;
+
+                    // Propagar a toda la jerarquía de vistas padres
+                    var parent = androidWebView.Parent;
+                    while (parent != null)
+                    {
+                        parent.RequestDisallowInterceptTouchEvent(bloquear);
+                        parent = parent.Parent as Android.Views.ViewGroup;
+                    }
+
+                    e.Handled = false;
+                };
+            }
+        };
+#endif
     }
 
     private async Task CargarHtmlAsync()
