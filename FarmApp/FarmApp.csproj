@@ -39,6 +39,11 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+	<!-- Forzar targetSdkVersion 35 (requerido por Google Play desde 2025) -->
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+		<AndroidTargetSdkVersion>35</AndroidTargetSdkVersion>
+	</PropertyGroup>
+
 	<!-- Protección y optimización en Release -->
 	<!-- R8 (AndroidLinkMode=SdkOnly): ofusca nombres Java y elimina código muerto del SDK Android -->
 	<!-- Trimming .NET no se usa: System.Text.Json y sqlite-net-pcl dependen de reflexión -->
