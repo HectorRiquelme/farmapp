@@ -44,7 +44,7 @@ public partial class HomeViewModel : BaseViewModel
 
         try
         {
-            // Verificar permiso de ubicación
+            // Solicitar permiso de ubicación (muestra diálogo nativo automáticamente)
             var permiso = await _locationService.TienePermisoUbicacionAsync();
             TienePermiso = permiso;
 
@@ -55,6 +55,7 @@ public partial class HomeViewModel : BaseViewModel
                 ubicacion = await _locationService.ObtenerUbicacionActualAsync(cts.Token);
             }
 
+            // Buscar farmacias aunque no haya GPS (funciona sin ubicación, solo sin distancias)
             var resultado = await _buscarFarmacias.EjecutarAsync(ubicacion);
 
             if (resultado.TieneError)
@@ -88,9 +89,14 @@ public partial class HomeViewModel : BaseViewModel
         var permiso = await _locationService.TienePermisoUbicacionAsync();
         TienePermiso = permiso;
 
-        if (!permiso)
+        if (permiso)
         {
-            // Abrir ajustes del sistema si el permiso fue negado definitivamente
+            // Permiso otorgado → lanzar búsqueda automáticamente
+            await BuscarFarmaciasAsync();
+        }
+        else
+        {
+            // Permiso denegado permanentemente → abrir ajustes del sistema
             AppInfo.Current.ShowSettingsUI();
         }
     }

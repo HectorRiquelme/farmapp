@@ -11,6 +11,9 @@ public class BusquedaResultado
     /// </summary>
     public List<Farmacia> TodasConDistancia { get; init; } = [];
 
+    /// <summary>Ubicación del usuario al momento de la búsqueda (puede ser null si no hay GPS).</summary>
+    public UbicacionUsuario? UbicacionUsuario { get; init; }
+
     public FuenteBusqueda Fuente { get; init; }
 
     public string? Advertencia { get; init; }
@@ -35,12 +38,14 @@ public class BusquedaResultado
         List<Farmacia> farmacias,
         FuenteBusqueda fuente,
         string? advertencia = null,
-        List<Farmacia>? todasConDistancia = null) =>
+        List<Farmacia>? todasConDistancia = null,
+        UbicacionUsuario? ubicacionUsuario = null) =>
         new()
         {
             Farmacias = farmacias,
             Fuente = fuente,
             Advertencia = advertencia,
-            TodasConDistancia = todasConDistancia ?? farmacias
+            TodasConDistancia = todasConDistancia ?? farmacias,
+            UbicacionUsuario = ubicacionUsuario
         };
 }

@@ -18,7 +18,10 @@ public partial class ResultadosPage : ContentPage
         vm.PropertyChanged += OnViewModelPropertyChanged;
 
         if (vm.TieneResultados)
+        {
             MiniMapa.LoadFarmacias(vm.TodasLasFarmacias);
+            EnviarUbicacionUsuarioAlMapa(vm);
+        }
     }
 
     protected override void OnDisappearing()
@@ -38,8 +41,14 @@ public partial class ResultadosPage : ContentPage
             // Lista actualizada (carga inicial o slider) → recargar todos los pins
             case nameof(ResultadosViewModel.MapaVersion):
                 if (vm.TieneResultados)
+                {
                     MiniMapa.LoadFarmacias(vm.TodasLasFarmacias);
+                    EnviarUbicacionUsuarioAlMapa(vm);
+                }
                 break;
+
+            // Lista actualizada por slider → también enviar ubicación del usuario
+            // (el mapa se recarga desde cero con loadFarmacias)
 
             // Card tocada → centrar mapa + resaltar card correspondiente
             case nameof(ResultadosViewModel.FarmaciaSeleccionadaEnMapaId):
@@ -49,6 +58,16 @@ public partial class ResultadosPage : ContentPage
                 ActualizarSeleccionEnLista(selectedId);
                 break;
         }
+    }
+
+    /// <summary>
+    /// Envía la ubicación del usuario al mapa para mostrar el pin azul "Tú estás aquí".
+    /// </summary>
+    private void EnviarUbicacionUsuarioAlMapa(ResultadosViewModel vm)
+    {
+        var ubicacion = vm.ResultadoBusqueda?.UbicacionUsuario;
+        if (ubicacion != null)
+            MiniMapa.SetUserLocation(ubicacion.Latitud, ubicacion.Longitud);
     }
 
     /// <summary>

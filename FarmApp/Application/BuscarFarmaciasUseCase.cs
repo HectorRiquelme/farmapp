@@ -103,7 +103,8 @@ public class BuscarFarmaciasUseCase
         var resultado = AplicarFiltroRadio(farmacias, ubicacion);
 
         return BusquedaResultado.Exitoso(resultado, FuenteBusqueda.Api,
-            todasConDistancia: todasConDistancia);
+            todasConDistancia: todasConDistancia,
+            ubicacionUsuario: ubicacion);
     }
 
     private async Task<BusquedaResultado> CargarDesdeCacheAsync(
@@ -136,7 +137,7 @@ public class BuscarFarmaciasUseCase
 
         var resultado = AplicarFiltroRadio(cacheadas, ubicacion);
         return BusquedaResultado.Exitoso(resultado, FuenteBusqueda.Cache, advertenciaFinal,
-            todasConDistancia);
+            todasConDistancia, ubicacionUsuario: ubicacion);
     }
 
     private List<Farmacia> AplicarFiltroRadio(List<Farmacia> farmacias, UbicacionUsuario? ubicacion)

@@ -1,6 +1,6 @@
 # PROJECT_CONTEXT.md — FarmApp
 
-> Contexto completo del proyecto. Última actualización: 2026-03-24.
+> Contexto completo del proyecto. Última actualización: 2026-03-27.
 
 ## 1. Identidad
 
@@ -32,16 +32,15 @@
 - [x] Renombramiento "Farmacia Abierta" → "FarmApp" en csproj, AppShell, docs, contexto
 - [x] R8 + Trimming activado en Release (ofuscación + optimización)
 - [x] Git inicializado, remote configurado en GitHub
-
-### Pendiente — correcciones pre-Play Store
-- [ ] `HomeViewModel.cs:33` — `Titulo = "Farmacia Abierta"` debe ser `"FarmApp"` (referencia interna restante)
-- [ ] `AppConstants.cs:13` — NominatimUserAgent usa email falso `farmapp@ejemplo.cl`, debe ser `hectorariquelmec@gmail.com`
-- [ ] `FarmApp.csproj:60` + `Resources/Images/dotnet_bot.png` — asset default MAUI sin uso, eliminar
+- [x] Mapa Leaflet reactivo al tema del sistema (claro/oscuro)
+- [x] Pin azul "Tu ubicación" en el mapa
+- [x] Solicitud automática de permiso GPS (popup nativo Android)
+- [x] Respuesta táctil del mapa mejorada (propagación a toda la jerarquía)
+- [x] GitHub Pages activado — política de privacidad online
+- [x] AAB firmado generado (36 MB, con R8)
+- [x] Verificado en dispositivo físico Samsung S23 Ultra
 
 ### Pendiente — operativo
-- [ ] Activar GitHub Pages para URL pública de política de privacidad
-- [ ] Generar AAB (Android App Bundle) firmado
-- [ ] Validación en dispositivo físico (Samsung S23 Ultra / Xiaomi MIUI)
 - [ ] Configuración Play Console (Data Safety, capturas, descripción, IARC)
 
 ## 3. Stack tecnológico
