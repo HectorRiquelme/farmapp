@@ -1,6 +1,33 @@
 # NEXT_STEPS.md — FarmApp
 
-> Pendientes reales verificados contra el código. Última actualización: 2026-03-27.
+> Pendientes reales verificados contra el código. Última actualización: 2026-03-27b.
+
+---
+
+## Qué se hizo en sesión 2026-03-27 (segunda parte)
+
+### AAB versionCode 4 con targetSdkVersion 35 — PROBLEMA RESUELTO
+Play Console rechazó versionCodes 1, 2 (ya usados) y 3 (targetSdk=34, no cumplía requisito).
+
+| # | Archivo | Cambio |
+|---|---------|--------|
+| 1 | `FarmApp.csproj` | `<ApplicationVersion>3</ApplicationVersion>` → `4` |
+| 2 | `FarmApp.csproj` | `<AndroidTargetSdkVersion>35</AndroidTargetSdkVersion>` movido al PropertyGroup principal (incondicional) |
+| 3 | `Platforms/Android/AndroidManifest.xml` | Agregado `<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />` para forzar override del workload |
+
+**Causa raíz del problema:** El workload `android 34.0.154` forzaba `targetSdkVersion=34` incluso con `<AndroidTargetSdkVersion>35` en PropertyGroup condicional. La declaración explícita en el manifest es el override definitivo.
+
+**Causa raíz del build fallido (primer intento):** Android SDK Platform 35 (`android.jar`) no estaba instalado en `C:\Program Files (x86)\Android\android-sdk\platforms\`. Sí estaba en `C:\Users\hecto\AppData\Local\Android\Sdk\platforms\android-35\`.
+
+**Fix de build:** Usar `-p:AndroidSdkDirectory=C:\Users\hecto\AppData\Local\Android\Sdk` en el comando publish.
+
+**Manifiesto final verificado:**
+```xml
+<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
+android:compileSdkVersion="35" android:versionCode="4" android:versionName="1.0"
+```
+
+**AAB final:** `farmapp-v1.0-vc4-Signed.aab` — 36 MB — en el escritorio.
 
 ---
 
@@ -295,15 +322,20 @@ Los siguientes tests no pudieron completarse vía ADB (offset de coordenadas en 
 
 ## Siguiente paso exacto
 
-**Configurar Google Play Console** (paso 1 arriba):
-1. Crear cuenta en [Play Console](https://play.google.com/console) ($25 USD único) — si no existe
-2. Crear app → nombre "FarmApp" → gratuita → categoría "Mapas y navegación"
-3. Subir AAB: `FarmApp/bin/Release/net8.0-android/cl.farmapp.farmaciaabierta-Signed.aab` (36 MB)
-4. Ficha de la tienda:
-   - Descripción corta: "Encuentra la farmacia de turno más cercana en Chile"
-   - Capturas: tomar screenshots del teléfono (mínimo 2)
-   - Icono 512x512 PNG + gráfico 1024x500
-5. Data Safety: ubicación (local, no compartida), sin cuenta, sin analytics
-6. Política de privacidad: `https://hectorriquelme.github.io/farmapp/privacy-policy.html`
-7. Clasificación IARC: completar cuestionario
-8. Enviar a revisión (~1-3 días)
+**Subir AAB versionCode 4 a Play Console:**
+1. En Play Console → Prueba interna / Producción → Crear nueva versión
+2. Subir `farmapp-v1.0-vc4-Signed.aab` (escritorio, 36 MB)
+3. Verificar que Play Console muestre: versionCode=4, targetSdk=35
+4. Completar ficha de la tienda pendiente y enviar a revisión
+
+**Comando para regenerar el AAB en próximas sesiones** (requiere `-p:AndroidSdkDirectory`):
+```bash
+dotnet publish FarmApp/FarmApp.csproj -f net8.0-android -c Release \
+  -p:AndroidPackageFormat=aab \
+  -p:AndroidKeyStore=true \
+  -p:AndroidSigningKeyStore=../farmapp-release.keystore \
+  -p:AndroidSigningKeyAlias=farmapp-key \
+  "-p:AndroidSigningKeyPass='Vz4:RG#!t%J" \
+  "-p:AndroidSigningStorePass='Vz4:RG#!t%J" \
+  "-p:AndroidSdkDirectory=C:\Users\hecto\AppData\Local\Android\Sdk"
+```
