@@ -185,7 +185,7 @@ FarmApp/
 ## 8. Flujo de búsqueda completo
 
 1. Usuario toca "Buscar ahora" → `HomeViewModel.BuscarFarmaciasAsync()`
-2. `MauiLocationService` solicita permiso GPS + obtiene ubicación (timeout 15s)
+2. `MauiLocationService` solicita permiso GPS (popup nativo Android) + obtiene ubicación (timeout 15s). Si el permiso fue recién otorgado, reintenta automáticamente.
 3. `BuscarFarmaciasUseCase.EjecutarAsync(ubicacion)`:
    - Limpieza preventiva de registros viejos (fire-and-forget)
    - Verifica `Connectivity.NetworkAccess`
@@ -198,7 +198,7 @@ FarmApp/
    - Filtra por radio progresivo (5→15→50→200 km), top 20
 4. Shell navega a `ResultadosPage` con `BusquedaResultado`
 5. `ResultadosViewModel` popula lista, marca la más cercana, carga mapa
-6. `MiniMapView` invoca JS: `loadFarmacias(json)` → pines en Leaflet
+6. `MiniMapView` invoca JS: `loadFarmacias(json)` → pines en Leaflet + `setUserLocation(lat, lon)` → pin azul usuario
 7. Tap en tarjeta → `centrarEn(id)` en JS + scroll en lista
 8. Tap en "Ver detalle" → navega a `DetallePage`
 
