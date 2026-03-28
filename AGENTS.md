@@ -45,7 +45,7 @@ FarmApp/
 | UserAppTheme = Unspecified | Respetar tema del sistema (bug anterior forzaba dark) |
 | SQLite con DatabaseConnection singleton | Evita contención por conexiones concurrentes |
 | Geocodificación con Take(10) + timeout 30s | Respetar rate limit Nominatim y batería |
-| R8 + Trimming en Release | Ofuscación + reducción de tamaño AAB/APK |
+| Solo R8 en Release (Trimming desactivado) | R8 ofusca Java; Trimming .NET se desactivó porque rompe `System.Text.Json` y `sqlite-net-pcl` (usan reflexión) |
 | Nombre "FarmApp" (no "Farmacia Abierta") | Corregido por el usuario; aplicar en todo nuevo código/doc |
 | Categoría Play Store: Mapas y navegación | Evita requisitos médicos extras de categoría Medicina |
 

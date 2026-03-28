@@ -1,6 +1,23 @@
 # NEXT_STEPS.md — FarmApp
 
-> Pendientes reales verificados contra el código. Última actualización: 2026-03-27b.
+> Pendientes reales verificados contra el código. Última actualización: 2026-03-28.
+
+---
+
+## Qué se hizo en sesión 2026-03-28
+
+### Publicación en Google Play Console — EN PROGRESO
+
+| # | Acción | Estado |
+|---|--------|--------|
+| 1 | AAB versionCode 4 (`farmapp-v1.0-vc4-Signed.aab`) subido a Play Console | ⚠️ Error UI: versión creada sin bundle adjunto |
+| 2 | Advertencias recibidas: sin `mapping.txt` y sin símbolos nativos | ✅ No bloqueantes — ignorar para primer lanzamiento |
+| 3 | Error 3x: "Debes subir un APK o AAB", "no permite actualización", "no se añaden bundles" | ✅ Causa: el bundle no se adjuntó en el paso 1 — error de flujo UI |
+| 4 | Solución: volver al paso "Crear versión", subir AAB y esperar confirmación antes de continuar | Pendiente |
+
+**Advertencias de Play Console (no bloqueantes):**
+- Sin archivo de desofuscación (`mapping.txt`): útil para crashlytics, no obligatorio. Ubicación si se quiere subir: `FarmApp/bin/Release/net8.0-android/android-arm64/r8/mapping.txt`
+- Sin símbolos de depuración nativos (`.so`): para análisis ANR, opcional en primer lanzamiento
 
 ---
 
@@ -322,11 +339,24 @@ Los siguientes tests no pudieron completarse vía ADB (offset de coordenadas en 
 
 ## Siguiente paso exacto
 
-**Subir AAB versionCode 4 a Play Console:**
-1. En Play Console → Prueba interna / Producción → Crear nueva versión
-2. Subir `farmapp-v1.0-vc4-Signed.aab` (escritorio, 36 MB)
-3. Verificar que Play Console muestre: versionCode=4, targetSdk=35
-4. Completar ficha de la tienda pendiente y enviar a revisión
+**Completar publicación en Play Console:**
+
+**Paso inmediato — subir el AAB correctamente:**
+1. En Play Console → Pruebas internas → Crear versión
+2. En el paso 1 ("Crear versión"), hacer clic en **"Subir"** o **"Add app bundle"**
+3. Seleccionar `farmapp-v1.0-vc4-Signed.aab` (escritorio, 36 MB)
+4. **Esperar** a que aparezca el bundle listado con versionCode=4 en la UI
+5. Guardar → Revisar y confirmar → Lanzar
+
+**Configuración pendiente de la ficha:**
+- Data Safety: ubicación (procesada localmente, no compartida), sin cuenta, sin ads
+- Capturas de pantalla: mínimo 2 teléfono + 1 tablet (recomendado)
+- Descripción corta (≤80 chars): "Encuentra la farmacia de turno más cercana en Chile"
+- Descripción larga (≤4000 chars): funcionalidades, fuente MINSAL, sin registro
+- Icono 512×512 PNG (sin canal alfa)
+- Gráfico de funciones 1024×500 PNG/JPG
+- Clasificación de contenido: completar cuestionario IARC
+- Países: Chile o global
 
 **Comando para regenerar el AAB en próximas sesiones** (requiere `-p:AndroidSdkDirectory`):
 ```bash
