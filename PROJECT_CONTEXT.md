@@ -1,6 +1,6 @@
 # PROJECT_CONTEXT.md — FarmApp
 
-> Contexto completo del proyecto. Última actualización: 2026-03-27.
+> Contexto completo del proyecto. Última actualización: 2026-03-28.
 
 ## 1. Identidad
 
@@ -171,7 +171,7 @@ FarmApp/
 | MinSalApiUrl | `https://midas.minsal.cl/farmacia_v2/WS/getLocalesTurnos.php` |
 | ApiTimeoutSegundos | 10 |
 | NominatimBaseUrl | `https://nominatim.openstreetmap.org/search` |
-| NominatimUserAgent | `FarmApp/1.0 (farmapp@ejemplo.cl)` |
+| NominatimUserAgent | `FarmApp/1.0 (hectorariquelmec@gmail.com)` |
 | CacheDiasMaximos | 2 |
 | RadioInicialKm | 5.0 |
 | RadioAmpliadoKm | 15.0 |
@@ -250,11 +250,11 @@ FarmApp/
 ## 10. Infraestructura de deploy
 
 - **Keystore release:** `farmapp-release.keystore` (raíz del proyecto, excluido de git)
-- **APK firmado:** `FarmApp/bin/Release/net8.0-android/android-arm64/cl.farmapp.farmaciaabierta-Signed.apk`
-- **AAB:** Pendiente de generar con `-p:AndroidPackageFormat=aab`
-- **R8 + Trimming:** Activado en Release (`FarmApp.csproj:43-49`)
-- **.NET SDK:** 8.0.400, workload android 34.0.154 (targetSdk 34, cumple requisito Google Play ≥34)
+- **AAB firmado:** `farmapp-v1.0-vc4-Signed.aab` — 36 MB — generado con versionCode=4, targetSdk=35
+- **Protección Release:** Solo R8 (`AndroidLinkMode=SdkOnly`). Trimming .NET **desactivado** (rompe JSON/SQLite reflection)
+- **.NET SDK:** 8.0.400, workload android 34.0.154 — targetSdk forzado a 35 vía `<uses-sdk>` en AndroidManifest + `<AndroidTargetSdkVersion>35` en PropertyGroup principal
+- **Android SDK para build:** `C:\Users\hecto\AppData\Local\Android\Sdk` (requerido en publish con `-p:AndroidSdkDirectory`)
 - **GitHub:** `https://github.com/HectorRiquelme/farmapp.git` — rama `main`
-- **Política de privacidad:** `docs/privacy-policy.html` (pendiente activar GitHub Pages)
-- **Play Console:** No configurada aún
+- **Política de privacidad:** `docs/privacy-policy.html` — online en `https://hectorriquelme.github.io/farmapp/privacy-policy.html` (GitHub Pages activo)
+- **Play Console:** AAB versionCode 4 en proceso de subida (prueba interna)
 - **Contacto desarrollador:** hectorariquelmec@gmail.com
