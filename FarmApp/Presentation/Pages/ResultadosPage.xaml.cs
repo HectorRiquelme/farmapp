@@ -1,14 +1,20 @@
+using FarmApp.Constants;
+using FarmApp.Domain.Interfaces;
 using FarmApp.Presentation.Controls;
 using FarmApp.Presentation.ViewModels;
+using Plugin.MauiMtAdmob.Controls;
 
 namespace FarmApp.Presentation.Pages;
 
 public partial class ResultadosPage : ContentPage
 {
-    public ResultadosPage(ResultadosViewModel viewModel)
+    private readonly IProService _proService;
+
+    public ResultadosPage(ResultadosViewModel viewModel, IProService proService)
     {
         InitializeComponent();
         BindingContext = viewModel;
+        _proService = proService;
     }
 
     protected override void OnAppearing()
@@ -16,6 +22,8 @@ public partial class ResultadosPage : ContentPage
         base.OnAppearing();
         var vm = (ResultadosViewModel)BindingContext;
         vm.PropertyChanged += OnViewModelPropertyChanged;
+
+        ActualizarZonaBanner();
 
         if (vm.TieneResultados)
         {
@@ -81,4 +89,51 @@ public partial class ResultadosPage : ContentPage
                 card.IsSelected = card.Farmacia?.Id == selectedId;
         }
     }
+
+    // ─────────────────────────────────────────────────────
+    //  Banner AdMob (solo versión gratuita)
+    // ─────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Construye el banner únicamente para usuarios sin Pro. Si el usuario
+    /// compra Pro (incluso a mitad de sesión), la zona queda vacía al volver.
+    /// </summary>
+    private void ActualizarZonaBanner()
+    {
+        if (_proService.EsPro)
+        {
+            ZonaBanner.Children.Clear();
+            return;
+        }
+
+        if (ZonaBanner.Children.Count > 0) return;
+
+        // Enlace discreto para quitar los anuncios comprando Pro
+        var enlacePro = new Label
+        {
+            Text = "Quitar anuncios · FarmApp Pro ⭐",
+            FontSize = 11,
+            HorizontalOptions = LayoutOptions.Center,
+            Padding = new Thickness(8, 6, 8, 4)
+        };
+        enlacePro.SetAppThemeColor(Label.TextColorProperty,
+            ObtenerColorRecurso("ColorTagCategoriaLight"),
+            ObtenerColorRecurso("ColorTagCategoria"));
+
+        var irAPro = new TapGestureRecognizer();
+        irAPro.Tapped += async (_, _) => await Shell.Current.GoToAsync(nameof(ProPage));
+        enlacePro.GestureRecognizers.Add(irAPro);
+
+        var banner = new MTAdView
+        {
+            AdsId = MonetizacionConstants.AdMobBannerResultadosId
+        };
+
+        ZonaBanner.Children.Add(enlacePro);
+        ZonaBanner.Children.Add(banner);
+    }
+
+    private static Color ObtenerColorRecurso(string clave) =>
+        Microsoft.Maui.Controls.Application.Current?.Resources.TryGetValue(clave, out var valor) == true
+            && valor is Color color ? color : Colors.Gray;
 }

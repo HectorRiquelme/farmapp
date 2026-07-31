@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="FarmApp.Presentation.Pages.ProPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:FarmApp.Presentation.ViewModels"
+    x:DataType="vm:ProViewModel"
+    BackgroundColor="{AppThemeBinding Dark={StaticResource ColorBackground}, Light={StaticResource ColorBackgroundLight}}"
+    Title="FarmApp Pro">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,20,24,32" Spacing="16">
+
+            <!-- ══════════════════════════════════════════════════ -->
+            <!--  HERO                                              -->
+            <!-- ══════════════════════════════════════════════════ -->
+            <Label
+                Text="⭐"
+                FontSize="44"
+                HorizontalOptions="Center" />
+
+            <VerticalStackLayout Spacing="4">
+                <Label
+                    Text="FarmApp Pro"
+                    FontSize="28"
+                    FontAttributes="Bold"
+                    HorizontalOptions="Center"
+                    TextColor="{AppThemeBinding Dark={StaticResource ColorTextoPrimario}, Light={StaticResource ColorTextoPrimarioLight}}" />
+                <Label
+                    Text="Una sola compra. Mejor experiencia para siempre."
+                    FontSize="14"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    TextColor="{AppThemeBinding Dark={StaticResource ColorTextoSecundario}, Light={StaticResource ColorTextoSecundarioLight}}" />
+            </VerticalStackLayout>
+
+            <!-- Confirmación de Pro activo -->
+            <Frame
+                IsVisible="{Binding EsPro}"
+                BackgroundColor="{AppThemeBinding Dark={StaticResource ColorSurface}, Light={StaticResource ColorSurfaceLight}}"
+                BorderColor="{StaticResource ColorAbiertaAhora}"
+                CornerRadius="14"
+                HasShadow="False"
+                Padding="16">
+                <Label
+                    Text="✓ FarmApp Pro está activo. ¡Gracias por apoyar la app!"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Center"
+                    TextColor="{StaticResource ColorAbiertaAhora}" />
+            </Frame>
+
+            <!-- ══════════════════════════════════════════════════ -->
+            <!--  BENEFICIOS                                        -->
+            <!-- ══════════════════════════════════════════════════ -->
+            <Frame
+                BackgroundColor="{AppThemeBinding Dark={StaticResource ColorSurface}, Light={StaticResource ColorSurfaceLight}}"
+                BorderColor="{AppThemeBinding Dark={StaticResource ColorSeparador}, Light={StaticResource ColorSeparadorLight}}"
+                CornerRadius="14"
+                HasShadow="False"
+                Padding="18,16">
+
+                <VerticalStackLayout Spacing="14">
+
+                    <Grid ColumnDefinitions="30,*" ColumnSpacing="10">
+                        <Label Text="🚫" FontSize="17" VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="1"
+                            Text="Sin anuncios, para siempre"
+                            FontSize="14"
+                            VerticalOptions="Center"
+                            TextColor="{AppThemeBinding Dark={StaticResource ColorTextoPrimario}, Light={StaticResource ColorTextoPrimarioLight}}" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="30,*" ColumnSpacing="10">
+                        <Label Text="📏" FontSize="17" VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="1"
+                            Text="Tu radio de búsqueda se recuerda entre sesiones"
+                            FontSize="14"
+                            VerticalOptions="Center"
+                            TextColor="{AppThemeBinding Dark={StaticResource ColorTextoPrimario}, Light={StaticResource ColorTextoPrimarioLight}}" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="30,*" ColumnSpacing="10">
+                        <Label Text="🌗" FontSize="17" VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="1"
+                            Text="Tema claro u oscuro a tu elección"
+                            FontSize="14"
+                            VerticalOptions="Center"
+                            TextColor="{AppThemeBinding Dark={StaticResource ColorTextoPrimario}, Light={StaticResource ColorTextoPrimarioLight}}" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="30,*" ColumnSpacing="10">
+                        <Label Text="💚" FontSize="17" VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="1"
+                            Text="Apoyas el desarrollo independiente de FarmApp"
+                            FontSize="14"
+                            VerticalOptions="Center"
+                            TextColor="{AppThemeBinding Dark={StaticResource ColorTextoPrimario}, Light={StaticResource ColorTextoPrimarioLight}}" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- ══════════════════════════════════════════════════ -->
+            <!--  PRECIO Y COMPRA (solo versión gratuita)           -->
+            <!-- ══════════════════════════════════════════════════ -->
+            <VerticalStackLayout IsVisible="{Binding NoEsPro}" Spacing="10">
+
+                <Label
+                    Text="{Binding PrecioTexto}"
+                    FontSize="30"
+                    FontAttributes="Bold"
+                    HorizontalOptions="Center"
+                    TextColor="{StaticResource ColorAbiertaAhora}" />
+
+                <Label
+                    Text="Pago único · Sin suscripción"
+                    FontSize="12"
+                    HorizontalOptions="Center"
+                    TextColor="{AppThemeBinding Dark={StaticResource ColorTextoSecundario}, Light={StaticResource ColorTextoSecundarioLight}}" />
+
+                <Button
+                    Text="Desbloquear FarmApp Pro"
+                    Command="{Binding ComprarCommand}"
+                    IsEnabled="{Binding NoEstaCargando}"
+                    BackgroundColor="{StaticResource ColorAbiertaAhora}"
+                    TextColor="White"
+                    CornerRadius="16"
+                    HeightRequest="56"
+                    FontSize="16"
+                    FontAttributes="Bold" />
+
+                <ActivityIndicator
+                    IsRunning="{Binding EstaCargando}"
+                    IsVisible="{Binding EstaCargando}"
+                    Color="{StaticResource ColorAbiertaAhora}"
+                    HorizontalOptions="Center" />
+
+                <Button
+                    Text="Restaurar compras"
+                    Command="{Binding RestaurarCommand}"
+                    IsEnabled="{Binding NoEstaCargando}"
+                    BackgroundColor="Transparent"
+                    TextColor="{AppThemeBinding Dark={StaticResource ColorTextoSecundario}, Light={StaticResource ColorTextoSecundarioLight}}"
+                    FontSize="13" />
+
+            </VerticalStackLayout>
+
+            <!-- Mensaje de resultado (compra, restauración o error) -->
+            <Frame
+                IsVisible="{Binding TieneMensaje}"
+                BackgroundColor="{AppThemeBinding Dark={StaticResource ColorAdvertenciaFondo}, Light={StaticResource ColorAdvertenciaFondoLight}}"
+                BorderColor="{AppThemeBinding Dark={StaticResource ColorAdvertenciaBorde}, Light={StaticResource ColorAdvertenciaBordeLight}}"
+                CornerRadius="12"
+                HasShadow="False"
+                Padding="14">
+                <Label
+                    Text="{Binding Mensaje}"
+                    FontSize="13"
+                    HorizontalTextAlignment="Center"
+                    TextColor="{AppThemeBinding Dark={StaticResource ColorAdvertenciaTexto}, Light={StaticResource ColorAdvertenciaTextoLight}}" />
+            </Frame>
+
+            <!-- ══════════════════════════════════════════════════ -->
+            <!--  AJUSTES PRO (solo con Pro activo)                 -->
+            <!-- ══════════════════════════════════════════════════ -->
+            <Frame
+                IsVisible="{Binding EsPro}"
+                BackgroundColor="{AppThemeBinding Dark={StaticResource ColorSurface}, Light={StaticResource ColorSurfaceLight}}"
+                BorderColor="{AppThemeBinding Dark={StaticResource ColorSeparador}, Light={StaticResource ColorSeparadorLight}}"
+                CornerRadius="14"
+                HasShadow="False"
+                Padding="18,16">
+
+                <VerticalStackLayout Spacing="10">
+
+                    <Label
+                        Text="Ajustes Pro"
+                        FontSize="15"
+                        FontAttributes="Bold"
+                        TextColor="{AppThemeBinding Dark={StaticResource ColorTextoPrimario}, Light={StaticResource ColorTextoPrimarioLight}}" />
+
+                    <Grid ColumnDefinitions="*, Auto" ColumnSpacing="12">
+                        <Label
+                            Text="Tema de la app"
+                            FontSize="14"
+                            VerticalOptions="Center"
+                            TextColor="{AppThemeBinding Dark={StaticResource ColorTextoSecundario}, Light={StaticResource ColorTextoSecundarioLight}}" />
+                        <Picker
+                            Grid.Column="1"
+                            ItemsSource="{Binding TemasDisponibles}"
+                            SelectedItem="{Binding TemaSeleccionado, Mode=TwoWay}"
+                            TextColor="{AppThemeBinding Dark={StaticResource ColorTextoPrimario}, Light={StaticResource ColorTextoPrimarioLight}}" />
+                    </Grid>
+
+                    <Label
+                        Text="El radio de búsqueda que apliques en resultados se recordará automáticamente."
+                        FontSize="12"
+                        TextColor="{AppThemeBinding Dark={StaticResource ColorTextoSutil}, Light={StaticResource ColorTextoSutilLight}}" />
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Nota de transparencia -->
+            <Label
+                Text="La información de farmacias de turno (datos MINSAL) es y seguirá siendo gratuita para todas las personas."
+                FontSize="11"
+                HorizontalTextAlignment="Center"
+                TextColor="{AppThemeBinding Dark={StaticResource ColorTextoSutil}, Light={StaticResource ColorTextoSutilLight}}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

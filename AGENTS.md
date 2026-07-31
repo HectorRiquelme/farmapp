@@ -4,14 +4,14 @@
 
 ## Contexto del proyecto
 
-FarmApp es una app .NET MAUI 8 que encuentra farmacias de turno nocturno en Chile usando datos oficiales del MINSAL. El proyecto sigue Clean Architecture con MVVM.
+FarmApp es una app .NET MAUI 10 (.NET 10) que encuentra farmacias de turno nocturno en Chile usando datos oficiales del MINSAL. El proyecto sigue Clean Architecture con MVVM. Monetización freemium: gratis con banner AdMob + compra única "FarmApp Pro" (ver `docs/MONETIZACION.md`).
 
 ## Antes de modificar código
 
 1. **Lee `CLAUDE.md`** para reglas obligatorias y arquitectura
 2. **Lee el archivo completo** que vas a modificar (no asumas contenido)
 3. **Verifica la capa** a la que pertenece el archivo — no mezclar capas
-4. **Valida con build** después de cada cambio: `dotnet build FarmApp/FarmApp.csproj -f net8.0-android`
+4. **Valida con build** después de cada cambio: `dotnet build FarmApp/FarmApp.csproj -f net10.0-android -p:AndroidSdkDirectory=C:\Users\hecto\AppData\Local\Android\Sdk`
 
 ## Estructura de capas
 
@@ -48,6 +48,10 @@ FarmApp/
 | Solo R8 en Release (Trimming desactivado) | R8 ofusca Java; Trimming .NET se desactivó porque rompe `System.Text.Json` y `sqlite-net-pcl` (usan reflexión) |
 | Nombre "FarmApp" (no "Farmacia Abierta") | Corregido por el usuario; aplicar en todo nuevo código/doc |
 | Categoría Play Store: Mapas y navegación | Evita requisitos médicos extras de categoría Medicina |
+| Freemium en UNA app (banner + IAP `farmapp_pro`) | El dato MINSAL nunca va detrás del paywall; solo banner, sin intersticiales |
+| .NET 10 / MAUI 10 (migrado 2026-07-31) | Google exige Billing Library 8+ desde 31-08-2026; los plugins de ads/IAP abandonaron net8 |
+| `Frame` sigue usándose pese a estar obsoleto | Migración masiva a `Border` no solicitada; warnings CS0618 conocidos |
+| IDs de AdMob de prueba en el código | Reemplazar por IDs reales SOLO al publicar (ver `docs/MONETIZACION.md`) |
 
 ## Flujo de búsqueda (referencia rápida)
 
@@ -62,6 +66,8 @@ FarmApp/
 ## Errores comunes a evitar
 
 - No registrar `GeocodingService` dos veces en DI (ya registrado vía `AddHttpClient`)
+- No escribir contraseñas del keystore en archivos del repo (es PÚBLICO en GitHub)
+- No olvidar el acknowledge de compras (`FinalizePurchaseAsync`) — sin él Google reembolsa a los 3 días
 - No crear nuevas `SQLiteAsyncConnection` — usar `DatabaseConnection.Db`
 - No usar `CollectionView` para la lista de farmacias
 - No hardcodear colores fuera de `Colors.xaml`

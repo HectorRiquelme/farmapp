@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FarmApp.Constants;
+using FarmApp.Domain.Interfaces;
 using FarmApp.Domain.Models;
 
 namespace FarmApp.Presentation.ViewModels;
@@ -8,6 +10,13 @@ namespace FarmApp.Presentation.ViewModels;
 [QueryProperty(nameof(ResultadoBusqueda), "ResultadoBusqueda")]
 public partial class ResultadosViewModel : BaseViewModel
 {
+    private readonly IProService _proService;
+
+    public ResultadosViewModel(IProService proService)
+    {
+        _proService = proService;
+    }
+
     // ─────────────────────────────────────────────────────
     //  Datos del resultado
     // ─────────────────────────────────────────────────────
@@ -85,6 +94,28 @@ public partial class ResultadosViewModel : BaseViewModel
 
         TieneDistancias = value.TodasConDistancia.Count > 0;
 
+        // Pro: aplicar el radio guardado por el usuario en búsquedas anteriores
+        var radioGuardado = _proService.EsPro
+            ? Preferences.Default.Get(AppConstants.PrefRadioKm, 0.0)
+            : 0.0;
+
+        if (TieneDistancias && radioGuardado >= 1)
+        {
+            RadioKm = Math.Min(25, radioGuardado);
+
+            var filtradas = value.TodasConDistancia
+                .Where(f => f.DistanciaKm.HasValue && f.DistanciaKm.Value <= RadioKm)
+                .Take(AppConstants.MaxResultadosLista)
+                .ToList();
+
+            if (filtradas.Count > 0)
+            {
+                ActualizarFarmacias(filtradas);
+                return;
+            }
+            // Radio guardado sin resultados → continuar con el flujo estándar
+        }
+
         // Ajustar el slider al radio efectivo que usó el UseCase
         if (TieneDistancias && value.Farmacias.Count > 0)
         {
@@ -106,6 +137,10 @@ public partial class ResultadosViewModel : BaseViewModel
     [RelayCommand]
     private void ConfirmarRadio()
     {
+        // Pro: recordar el radio elegido para próximas búsquedas
+        if (_proService.EsPro)
+            Preferences.Default.Set(AppConstants.PrefRadioKm, RadioKm);
+
         var resultado = ResultadoBusqueda;
         if (resultado?.TodasConDistancia.Count > 0)
         {

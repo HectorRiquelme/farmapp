@@ -5,10 +5,12 @@ using FarmApp.Domain.Interfaces;
 using FarmApp.Domain.Services;
 using FarmApp.Infrastructure.Api;
 using FarmApp.Infrastructure.Cache;
+using FarmApp.Infrastructure.Compras;
 using FarmApp.Infrastructure.Location;
 using FarmApp.Presentation.Pages;
 using FarmApp.Presentation.ViewModels;
 using Microsoft.Extensions.Logging;
+using Plugin.MauiMtAdmob;
 
 namespace FarmApp;
 
@@ -21,6 +23,7 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
+            .UseMauiMTAdmob()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -51,6 +54,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<IFarmaciaRepository, FarmaciaRepository>();
         builder.Services.AddSingleton<IGeoCacheRepository, GeoCacheRepository>();
         builder.Services.AddSingleton<ILocationService, MauiLocationService>();
+        builder.Services.AddSingleton<IProService, ComprasService>();
         // GeocodingService ya registrado vía AddHttpClient arriba — no duplicar
 
         // --- Casos de uso ---
@@ -60,11 +64,13 @@ public static class MauiProgram
         builder.Services.AddTransient<HomeViewModel>();
         builder.Services.AddTransient<ResultadosViewModel>();
         builder.Services.AddTransient<DetalleFarmaciaViewModel>();
+        builder.Services.AddTransient<ProViewModel>();
 
         // --- Páginas ---
         builder.Services.AddTransient<HomePage>();
         builder.Services.AddTransient<ResultadosPage>();
         builder.Services.AddTransient<DetallePage>();
+        builder.Services.AddTransient<ProPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();

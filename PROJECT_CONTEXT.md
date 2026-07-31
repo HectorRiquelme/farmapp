@@ -1,15 +1,16 @@
 # PROJECT_CONTEXT.md — FarmApp
 
-> Contexto completo del proyecto. Última actualización: 2026-03-28.
+> Contexto completo del proyecto. Última actualización: 2026-07-31.
 
 ## 1. Identidad
 
 - **Nombre:** FarmApp
 - **App ID:** `cl.farmapp.farmaciaabierta`
-- **Versión:** 1.0 (ApplicationVersion=4)
-- **Tipo:** App móvil multiplataforma (.NET MAUI 8)
-- **Target prioritario:** Android (API 21+, arm64)
+- **Versión:** 1.1 (ApplicationVersion=5)
+- **Tipo:** App móvil multiplataforma (.NET MAUI 10 / .NET 10)
+- **Target prioritario:** Android (API 24+, arm64, targetSdk 36)
 - **Objetivo:** Encontrar la farmacia de turno nocturno más cercana en Chile usando datos oficiales MINSAL
+- **Modelo de negocio:** Freemium — gratis con banner AdMob + compra única "FarmApp Pro" (`farmapp_pro`). Ver `docs/MONETIZACION.md`
 
 ## 2. Estado actual (verificado 2026-03-24)
 
@@ -37,29 +38,39 @@
 - [x] Solicitud automática de permiso GPS (popup nativo Android)
 - [x] Respuesta táctil del mapa mejorada (propagación a toda la jerarquía)
 - [x] GitHub Pages activado — política de privacidad online
-- [x] AAB versionCode 4 con targetSdk 35 generado (36 MB, con R8) — listo para Play Store
+- [x] AAB versionCode 4 con targetSdk 35 generado (36 MB, con R8) — subido a prueba interna
 - [x] Verificado en dispositivo físico Samsung S23 Ultra
-- [x] targetSdkVersion=35 forzado vía `<uses-sdk>` en AndroidManifest + SDK en AppData
+- [x] **Migración a .NET 10 / MAUI 10** (2026-07-31): TFMs net10.0-*, targetSdk 36, minSdk 24, `global.json` ancla SDK 10.0.1xx, `CreateWindow` reemplaza `MainPage`, sin `Controls.Compatibility`
+- [x] **Monetización freemium implementada** (2026-07-31): `IProService`/`ComprasService` (Plugin.InAppBilling 10, Billing 8.1, acknowledge + restauración + revalidación), banner AdMob en resultados (Plugin.MauiMTAdmob 2.4, solo no-Pro), `ProPage` paywall, radio persistente y tema manual para Pro
+- [x] Build Debug y Release net10.0-android: 0 errores (warnings conocidos documentados en CLAUDE.md)
 
-### Pendiente — operativo
-- [ ] Configuración Play Console (Data Safety, capturas, descripción, IARC)
+### Pendiente — operativo (acciones del desarrollador)
+- [ ] Crear cuenta AdMob + unidad banner → reemplazar IDs de prueba (manifest + `MonetizacionConstants`)
+- [ ] Crear producto `farmapp_pro` en Play Console (CLP $2.990 sugerido) y activarlo
+- [ ] Actualizar Data Safety (ahora hay anuncios/advertising ID) y política de privacidad
+- [ ] app-ads.txt en `hectorriquelme.github.io` (raíz del dominio)
+- [ ] Probar compra/restauración/reembolso en prueba interna (license testers)
+- [ ] Subir AAB versionCode 5 (net10, targetSdk 36, Billing 8) y completar ficha (capturas, IARC)
 
 ## 3. Stack tecnológico
 
 | Componente | Tecnología | Versión |
 |------------|-----------|---------|
-| Framework | .NET MAUI | 8.0 |
+| Framework | .NET MAUI (Microsoft.Maui.Controls) | 10.0.90 (.NET 10) |
 | MVVM | CommunityToolkit.Mvvm | 8.3.2 |
-| UI toolkit | CommunityToolkit.Maui | 9.1.1 |
-| HTTP | Microsoft.Extensions.Http | 8.0.0 |
+| UI toolkit | CommunityToolkit.Maui | 15.0.0 |
+| HTTP | Microsoft.Extensions.Http | 10.0.10 |
 | Base de datos | sqlite-net-pcl | 1.9.172 |
-| SQLite nativo | SQLitePCLRaw.bundle_green | 2.1.10 |
+| SQLite nativo | SQLitePCLRaw.bundle_green | 2.1.11 |
+| Compras in-app | Plugin.InAppBilling | 10.0.0 (Billing Library 8.1) |
+| Anuncios | Plugin.MauiMTAdmob | 2.4.0 (GMA SDK 24) — namespace `Plugin.MauiMtAdmob` ("t" minúscula) |
 | Mapa | Leaflet.js | 1.9.4 (bundled) |
 | Tiles | CartoDB Dark Matter | CDN online |
 | Geocodificación | Nominatim OSM | API pública |
 | API datos | MIDAS/MINSAL | API pública |
 
-**Sin backend propio.** La app consume directamente las APIs públicas.
+**Sin backend propio.** La app consume directamente las APIs públicas; la titularidad de
+FarmApp Pro se consulta a Google Play y se cachea en Preferences (`pref_es_pro`).
 
 ## 4. Arquitectura
 
@@ -88,18 +99,21 @@ FarmApp/
 ├── App.xaml / App.xaml.cs                ← Bootstrap, UserAppTheme = Unspecified
 ├── AppShell.xaml / .cs                   ← Shell, ruta raíz = HomePage
 ├── Constants/
-│   └── AppConstants.cs                   ← URLs, timeouts, radios, nombre DB
+│   ├── AppConstants.cs                   ← URLs, timeouts, radios, nombre DB
+│   └── MonetizacionConstants.cs          ← IDs AdMob (⚠️ de prueba) + producto farmapp_pro
 ├── Domain/
 │   ├── Models/
 │   │   ├── Farmacia.cs                   ← Entidad principal (SQLite)
 │   │   ├── BusquedaResultado.cs          ← Resultado de búsqueda
 │   │   ├── UbicacionUsuario.cs           ← Record (Lat, Lon)
+│   │   ├── ResultadoCompraPro.cs         ← EstadoCompraPro + record de resultado
 │   │   └── Enums.cs                      ← TipoFarmacia, EstadoApertura, FuenteBusqueda
 │   ├── Interfaces/
 │   │   ├── IFarmaciaProvider.cs
 │   │   ├── IFarmaciaRepository.cs
 │   │   ├── IGeoCacheRepository.cs
-│   │   └── ILocationService.cs
+│   │   ├── ILocationService.cs
+│   │   └── IProService.cs                ← Estado y operaciones de FarmApp Pro
 │   └── Services/
 │       ├── AperturaService.cs            ← Estado apertura por horario
 │       └── GeoDistanciaService.cs        ← Haversine + filtro por radio
@@ -115,18 +129,22 @@ FarmApp/
 │   │   ├── DatabaseConnection.cs         ← SQLite singleton compartido
 │   │   ├── FarmaciaRepository.cs         ← SQLite farmacias
 │   │   └── GeoCacheRepository.cs         ← SQLite coordenadas + clase GeoCache
+│   ├── Compras/
+│   │   └── ComprasService.cs             ← Google Play Billing (IProService): compra, acknowledge, restauración, revalidación
 │   └── Location/
 │       └── MauiLocationService.cs        ← GPS vía MAUI Geolocation
 ├── Presentation/
 │   ├── Pages/
-│   │   ├── HomePage.xaml / .cs           ← Pantalla inicio con logo y botón buscar
-│   │   ├── ResultadosPage.xaml / .cs     ← Lista + slider radio + miniMapa
-│   │   └── DetallePage.xaml / .cs        ← Detalle farmacia + llamar/navegar
+│   │   ├── HomePage.xaml / .cs           ← Pantalla inicio con logo, botón buscar y acceso a Pro
+│   │   ├── ResultadosPage.xaml / .cs     ← Lista + slider radio + miniMapa + banner AdMob (no-Pro)
+│   │   ├── DetallePage.xaml / .cs        ← Detalle farmacia + llamar/navegar
+│   │   └── ProPage.xaml / .cs            ← Paywall: beneficios, comprar, restaurar, ajustes Pro
 │   ├── ViewModels/
 │   │   ├── BaseViewModel.cs              ← EstaCargando, Titulo, NoEstaCargando
-│   │   ├── HomeViewModel.cs              ← Búsqueda + permisos GPS
-│   │   ├── ResultadosViewModel.cs        ← Filtrado + control mapa
-│   │   └── DetalleFarmaciaViewModel.cs   ← Detalle + acciones
+│   │   ├── HomeViewModel.cs              ← Búsqueda + permisos GPS + IrAPro
+│   │   ├── ResultadosViewModel.cs        ← Filtrado + control mapa + radio persistente (Pro)
+│   │   ├── DetalleFarmaciaViewModel.cs   ← Detalle + acciones
+│   │   └── ProViewModel.cs               ← Compra/restauración + precio localizado + tema
 │   ├── Controls/
 │   │   ├── FarmaciaCardCompacta.xaml/.cs  ← Tarjeta unificada
 │   │   ├── EstadoBadge.xaml / .cs        ← Badge estado con color
@@ -179,9 +197,19 @@ FarmApp/
 | RadioMaximoKm | 200.0 |
 | MaxResultadosLista | 20 |
 | NombreBaseDatos | `farmapp.db` |
-| PrefRadioKm | `pref_radio_km` (definida, sin uso actual) |
-| PrefTemaApp | `pref_tema_app` (definida, sin uso actual) |
+| PrefRadioKm | `pref_radio_km` — **en uso**: radio persistente para usuarios Pro |
+| PrefTemaApp | `pref_tema_app` — **en uso**: tema manual para usuarios Pro |
 | PrefUltimaComuna | `pref_ultima_comuna` (definida, sin uso actual) |
+
+### MonetizacionConstants.cs
+
+| Constante | Valor |
+|-----------|-------|
+| ProductoProId | `farmapp_pro` (no consumible; debe existir en Play Console con ese ID) |
+| PrefEsPro | `pref_es_pro` |
+| AdMobBannerResultadosId | ⚠️ ID DE PRUEBA de Google — reemplazar antes de publicar |
+
+El App ID de AdMob (⚠️ también de prueba) vive en `Platforms/Android/AndroidManifest.xml`.
 
 ## 8. Flujo de búsqueda completo
 
@@ -249,12 +277,13 @@ FarmApp/
 
 ## 10. Infraestructura de deploy
 
-- **Keystore release:** `farmapp-release.keystore` (raíz del proyecto, excluido de git)
-- **AAB firmado:** `farmapp-v1.0-vc4-Signed.aab` — 36 MB — generado con versionCode=4, targetSdk=35
+- **Keystore release:** `farmapp-release.keystore` (raíz del proyecto, excluido de git). ⚠️ La contraseña estuvo expuesta en este repo público hasta 2026-07-31 — ver NEXT_STEPS.md (sección seguridad); nunca escribirla en archivos del repo
+- **Próximo AAB:** versionCode=5, versión 1.1, targetSdk=36, Billing Library 8.1 (pendiente de generar tras reemplazar IDs de AdMob)
 - **Protección Release:** Solo R8 (`AndroidLinkMode=SdkOnly`). Trimming .NET **desactivado** (rompe JSON/SQLite reflection)
-- **.NET SDK:** 8.0.400, workload android 34.0.154 — targetSdk forzado a 35 vía `<uses-sdk>` en AndroidManifest + `<AndroidTargetSdkVersion>35` en PropertyGroup principal
-- **Android SDK para build:** `C:\Users\hecto\AppData\Local\Android\Sdk` (requerido en publish con `-p:AndroidSdkDirectory`)
-- **GitHub:** `https://github.com/HectorRiquelme/farmapp.git` — rama `main`
-- **Política de privacidad:** `docs/privacy-policy.html` — online en `https://hectorriquelme.github.io/farmapp/privacy-policy.html` (GitHub Pages activo)
-- **Play Console:** AAB versionCode 4 en proceso de subida (prueba interna)
+- **.NET SDK:** 10.0.1xx anclado por `global.json` (rollForward latestPatch) — workloads `android 36.1.43` + `maui 10.0.20` instalados vía VS. El SDK 10.0.2xx NO tiene workloads: no quitar el global.json
+- **targetSdk:** 36 por defecto del workload (se eliminó el override `<uses-sdk>` del manifest y `<AndroidTargetSdkVersion>` del csproj); minSdk 24 vía `SupportedOSPlatformVersion`
+- **Android SDK para build:** `C:\Users\hecto\AppData\Local\Android\Sdk` (pasar `-p:AndroidSdkDirectory` en build/publish)
+- **GitHub:** `https://github.com/HectorRiquelme/app-farmapp.git` — rama `main` — repo **PÚBLICO**
+- **Política de privacidad:** `docs/privacy-policy.html` — ⚠️ pendiente: agregar sección de anuncios (AdMob/advertising ID) y compras; verificar que la URL pública de GitHub Pages siga activa tras el cambio de nombre del repo
+- **Play Console:** ficha creada; siguiente subida = AAB vc5 con monetización
 - **Contacto desarrollador:** hectorariquelmec@gmail.com

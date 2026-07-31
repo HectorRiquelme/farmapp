@@ -15,7 +15,7 @@
         <BackButtonBehavior IsVisible="True" />
     </Shell.BackButtonBehavior>
 
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, *, Auto">
 
         <!-- Banner de advertencia (caché / desactualizado) -->
         <Frame
@@ -194,6 +194,12 @@
 
             </VerticalStackLayout>
         </ScrollView>
+
+        <!-- Zona de anuncio (solo versión gratuita; se construye en code-behind) -->
+        <VerticalStackLayout
+            x:Name="ZonaBanner"
+            Grid.Row="2"
+            Spacing="0" />
 
     </Grid>
 

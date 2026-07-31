@@ -100,4 +100,8 @@ public partial class HomeViewModel : BaseViewModel
             AppInfo.Current.ShowSettingsUI();
         }
     }
+
+    [RelayCommand]
+    private static async Task IrAProAsync() =>
+        await Shell.Current.GoToAsync(nameof(Pages.ProPage));
 }

@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:compileSdkVersion="35">
-    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
-    <application android:allowBackup="true" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round" android:supportsRtl="true"></application>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:allowBackup="true" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round" android:supportsRtl="true">
+        <!-- AdMob App ID — actualmente el ID DE PRUEBA oficial de Google.        -->
+        <!-- ⚠️ Reemplazar por el App ID real (ca-app-pub-XXXXXXXX~YYYYYYYY)      -->
+        <!-- de https://apps.admob.com antes de publicar en Play Store.           -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
+    </application>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Requerido para geolocalización -->

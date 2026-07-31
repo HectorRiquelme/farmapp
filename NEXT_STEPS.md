@@ -1,6 +1,68 @@
 # NEXT_STEPS.md — FarmApp
 
-> Pendientes reales verificados contra el código. Última actualización: 2026-03-28.
+> Pendientes reales verificados contra el código. Última actualización: 2026-07-31.
+
+---
+
+## Qué se hizo en sesión 2026-07-31
+
+### 1. Migración .NET 8 → .NET 10 (MAUI 10) — obligatoria para monetizar
+
+| Motivo | Detalle |
+|---|---|
+| Google Play exige Billing Library 8+ | Desde el 31-08-2026 rechaza apps/actualizaciones con Billing <8. La única versión de Plugin.InAppBilling con Billing 8 (v10.0.0) requiere net10 |
+| Plugins abandonaron net8 | Plugin.MauiMTAdmob quitó soporte .NET 8 desde su v2.1.0 |
+| MAUI 8 fuera de soporte | EOL desde mayo 2025 |
+
+Cambios: TFMs `net10.0-*`, `global.json` ancla SDK 10.0.1xx (el 10.0.2xx NO tiene workloads),
+targetSdk 36 (se eliminó el hack `<uses-sdk>` del manifest), minSdk 24, `CreateWindow` en vez
+de `MainPage` (obsoleto), fuera `Microsoft.Maui.Controls.Compatibility`, paquetes actualizados
+(Maui.Controls 10.0.90, CTK.Maui 15.0.0, Extensions 10.0.10, SQLitePCLRaw 2.1.11).
+
+### 2. Monetización freemium implementada (ver `docs/MONETIZACION.md`)
+
+| # | Pieza | Archivo(s) |
+|---|---|---|
+| 1 | Constantes de monetización (IDs ⚠️ DE PRUEBA) | `Constants/MonetizacionConstants.cs` |
+| 2 | Contrato Pro + resultado de compra | `Domain/Interfaces/IProService.cs`, `Domain/Models/ResultadoCompraPro.cs` |
+| 3 | Compras Google Play (Billing 8.1): compra → acknowledge → caché; restauración; revalidación al arranque | `Infrastructure/Compras/ComprasService.cs` |
+| 4 | Paywall con precio localizado, comprar, restaurar, ajustes Pro | `Presentation/Pages/ProPage.xaml(.cs)`, `ViewModels/ProViewModel.cs` |
+| 5 | Banner AdMob solo para no-Pro + enlace "Quitar anuncios" | `ResultadosPage.xaml(.cs)` (`ZonaBanner`) |
+| 6 | Features Pro: radio de búsqueda persistente (`PrefRadioKm`) y tema manual (`PrefTemaApp`) | `ResultadosViewModel.cs`, `ProViewModel.cs`, `App.xaml.cs` |
+| 7 | AdMob App ID (⚠️ de prueba) + registro del plugin y DI | `AndroidManifest.xml`, `MauiProgram.cs`, `AppShell.xaml.cs` |
+| 8 | Acceso al paywall desde Home | `HomePage.xaml`, `HomeViewModel.cs` |
+
+**Builds verificados:** Debug y Release `net10.0-android` — 0 errores.
+Warnings aceptados y documentados en CLAUDE.md (CS0618 Frame obsoleto, NU1608 AndroidX, NU1903 CVE sqlite sin parche upstream).
+
+### 3. ⚠️ SEGURIDAD — contraseña del keystore expuesta (acción requerida)
+
+Este archivo contenía la contraseña del keystore en texto plano, y el repo es **PÚBLICO** en
+GitHub. La contraseña fue eliminada de esta versión del archivo, pero **sigue visible en el
+historial de git**. Mitigaciones (en orden de importancia):
+
+1. El archivo `farmapp-release.keystore` NO está en el repo (gitignore ✓) → sin el archivo,
+   la contraseña sola no permite firmar. Riesgo real: bajo, pero no nulo.
+2. **Recomendado:** cambiar la contraseña del keystore:
+   `keytool -storepasswd -keystore farmapp-release.keystore` (y `-keypasswd` para el alias).
+3. Opcional (borrar del historial): `git filter-repo --replace-text` + force push, o recrear
+   el repo. Si no, asumir la contraseña antigua como comprometida.
+4. Si usas Play App Signing (recomendado al publicar), la clave de subida se puede rotar
+   con soporte de Google si algún día se compromete de verdad.
+5. Regla desde hoy: contraseñas SOLO por variable de entorno (ver comando al final).
+
+### 4. Pendientes del usuario para lanzar (checklist completo en `docs/MONETIZACION.md`)
+
+- [ ] Cuenta AdMob → crear app + unidad banner → **reemplazar IDs de prueba** en
+      `MonetizacionConstants.cs` y `AndroidManifest.xml`
+- [ ] Play Console → Productos integrados → crear **`farmapp_pro`** (sugerido CLP $2.990) → Activo
+- [ ] Data Safety: declarar anuncios + advertising ID (SDK AdMob)
+- [ ] `docs/privacy-policy.html`: agregar sección de anuncios y compras in-app
+- [ ] `app-ads.txt` en la raíz de `hectorriquelme.github.io`
+- [ ] Prueba interna con license testers: comprar → banner desaparece → reinstalar →
+      restaurar → reembolsar → revalidación quita el Pro
+- [ ] Capturas nuevas si Google las pide (Home cambió: botón "⭐ FarmApp Pro")
+- [ ] Generar AAB vc5 y subir
 
 ---
 
@@ -358,14 +420,16 @@ Los siguientes tests no pudieron completarse vía ADB (offset de coordenadas en 
 - Clasificación de contenido: completar cuestionario IARC
 - Países: Chile o global
 
-**Comando para regenerar el AAB en próximas sesiones** (requiere `-p:AndroidSdkDirectory`):
-```bash
-dotnet publish FarmApp/FarmApp.csproj -f net8.0-android -c Release \
-  -p:AndroidPackageFormat=aab \
-  -p:AndroidKeyStore=true \
-  -p:AndroidSigningKeyStore=../farmapp-release.keystore \
-  -p:AndroidSigningKeyAlias=farmapp-key \
-  "-p:AndroidSigningKeyPass='Vz4:RG#!t%J" \
-  "-p:AndroidSigningStorePass='Vz4:RG#!t%J" \
-  "-p:AndroidSdkDirectory=C:\Users\hecto\AppData\Local\Android\Sdk"
+**Comando para regenerar el AAB en próximas sesiones** (PowerShell; la contraseña va por
+variable de entorno — NUNCA escribirla en archivos del repo, es público):
+```powershell
+$env:FARMAPP_STOREPASS = Read-Host -AsSecureString | ConvertFrom-SecureString -AsPlainText
+dotnet publish FarmApp/FarmApp.csproj -f net10.0-android -c Release `
+  -p:AndroidPackageFormat=aab `
+  -p:AndroidKeyStore=true `
+  -p:AndroidSigningKeyStore=../farmapp-release.keystore `
+  -p:AndroidSigningKeyAlias=farmapp-key `
+  -p:AndroidSigningKeyPass=$env:FARMAPP_STOREPASS `
+  -p:AndroidSigningStorePass=$env:FARMAPP_STOREPASS `
+  -p:AndroidSdkDirectory=C:\Users\hecto\AppData\Local\Android\Sdk
 ```

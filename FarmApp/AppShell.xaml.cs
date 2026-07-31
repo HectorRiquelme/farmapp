@@ -11,5 +11,6 @@ public partial class AppShell : Shell
         // Registrar rutas de navegación para Shell.GoToAsync
         Routing.RegisterRoute(nameof(ResultadosPage), typeof(ResultadosPage));
         Routing.RegisterRoute(nameof(DetallePage), typeof(DetallePage));
+        Routing.RegisterRoute(nameof(ProPage), typeof(ProPage));
     }
 }
